@@ -4,18 +4,57 @@
 }
 
 .isaiah-poster-frame{
+  position:relative;
   margin:0;
   border:1px solid var(--line);
   border-radius:22px;
   overflow:hidden;
   background:#fffdf8;
   box-shadow:0 10px 28px rgba(22,50,39,.07);
+  isolation:isolate;
 }
 
 .isaiah-poster-image{
+  position:relative;
+  z-index:1;
   display:block;
   width:100%;
   height:auto;
+}
+
+/*
+  waterfall-crop.png 對應原海報 1536×864 的區域：
+  x≈828–1076, y≈413–698。
+  使用百分比定位，所以 PC / Android / iPhone 縮放時會跟著海報一起縮放。
+*/
+.isaiah-waterfall-video{
+  position:absolute;
+  z-index:2;
+  left:53.75%;
+  top:47.55%;
+  width:16.40%;
+  height:33.45%;
+  object-fit:cover;
+  object-position:center;
+  pointer-events:none;
+  transform:translateZ(0);
+  backface-visibility:hidden;
+
+  /* 輕微羽化邊緣，避免影片與靜態海報之間出現硬接縫 */
+  -webkit-mask-image:radial-gradient(
+    ellipse 98% 100% at 50% 50%,
+    #000 0%,
+    #000 78%,
+    rgba(0,0,0,.92) 88%,
+    transparent 100%
+  );
+  mask-image:radial-gradient(
+    ellipse 98% 100% at 50% 50%,
+    #000 0%,
+    #000 78%,
+    rgba(0,0,0,.92) 88%,
+    transparent 100%
+  );
 }
 
 .sr-only{
@@ -32,6 +71,12 @@
 
 .center-action{
   margin-top:18px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .isaiah-waterfall-video{
+    display:none;
+  }
 }
 
 @media (max-width:760px){
