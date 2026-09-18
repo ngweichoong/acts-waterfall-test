@@ -1,0 +1,10 @@
+Tému Stay 官方網站
+https://www.temustay.com/
+
+官方 Gallery
+https://www.temustay.com/gallery
+
+Our Stays
+https://www.temustay.com/our-stays
+
+Gallery 圖片：本程式使用官方 Gallery 頁面提供的 12 個不同 Wix 圖片資源 URL。

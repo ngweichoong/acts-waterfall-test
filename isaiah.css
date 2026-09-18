@@ -1,0 +1,45 @@
+.isaiah-poster-section{
+  margin:20px auto 0;
+  width:min(1100px,100%);
+}
+
+.isaiah-poster-frame{
+  margin:0;
+  border:1px solid var(--line);
+  border-radius:22px;
+  overflow:hidden;
+  background:#fffdf8;
+  box-shadow:0 10px 28px rgba(22,50,39,.07);
+}
+
+.isaiah-poster-image{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+.center-action{
+  margin-top:18px;
+}
+
+@media (max-width:760px){
+  .isaiah-poster-section{
+    margin-top:14px;
+  }
+
+  .isaiah-poster-frame{
+    border-radius:16px;
+  }
+}
