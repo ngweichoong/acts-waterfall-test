@@ -61,8 +61,27 @@
 
     <section class="isaiah-poster-section" aria-labelledby="isaiah-poster-title">
       <h2 id="isaiah-poster-title" class="sr-only">一片更新的盼望</h2>
+
       <figure class="isaiah-poster-frame">
-        <img src="../assets/isaiah-hope-banner.svg" alt="一片更新的盼望海報，左側為以賽亞書 41:18 經文與說明文字，右側為山谷泉源與瀑布景色，並寫有從曠野，到泉源。" class="isaiah-poster-image">
+        <img
+          src="../assets/isaiah-hope-banner.svg"
+          alt="一片更新的盼望海報，左側為以賽亞書 41:18 經文與說明文字，右側為山谷泉源與瀑布景色，並寫有從曠野，到泉源。"
+          class="isaiah-poster-image"
+        >
+
+        <!-- 瀑布局部動畫：原海報本身完全保留，影片只覆蓋裁出的水流區域 -->
+        <video
+          class="isaiah-waterfall-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          disablepictureinpicture
+          aria-hidden="true"
+        >
+          <source src="../assets/isaiah-waterfall-loop.mp4" type="video/mp4">
+        </video>
       </figure>
     </section>
 
@@ -70,5 +89,29 @@
   </main>
 
   <script src="../flow.js"></script>
+  <script>
+    (() => {
+      const video = document.querySelector('.isaiah-waterfall-video');
+      if (!video) return;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const tryPlay = () => {
+        if (reduceMotion.matches) {
+          video.pause();
+          return;
+        }
+        video.muted = true;
+        video.play().catch(() => {});
+      };
+
+      video.addEventListener('canplay', tryPlay);
+      window.addEventListener('pageshow', tryPlay);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) tryPlay();
+      });
+
+      tryPlay();
+    })();
+  </script>
 </body>
 </html>
