@@ -113,39 +113,16 @@
   opacity:.9;
 }
 
-.isaiah-right-calligraphy{
+.isaiah-right-art{
   position:absolute;
-  right:3.0%;
-  top:60.6%;
-  margin:0;
-  color:#fff;
-  font-family:"DFKai-SB","BiauKai","KaiTi","STKaiti","Kaiti TC","Noto Serif TC",serif;
-  font-size:4.05cqw;
-  font-weight:500;
-  line-height:1.28;
-  letter-spacing:.07em;
-  text-shadow:0 2px 5px rgba(0,0,0,.32);
-  transform:rotate(-2deg);
-  transform-origin:center;
-  white-space:nowrap;
-}
-
-.isaiah-right-calligraphy .line2{
+  right:1.8%;
+  top:53.7%;
+  width:27.3%;
+  height:auto;
   display:block;
-  margin-left:4.5cqw;
-}
-
-.isaiah-right-citation{
-  position:absolute;
-  right:4.0%;
-  top:87.4%;
-  margin:0;
-  color:rgba(255,255,255,.92);
-  font-family:"PMingLiU","Songti TC","Noto Serif TC","Times New Roman",serif;
-  font-size:1.35cqw;
-  line-height:1.2;
-  text-shadow:0 1px 4px rgba(0,0,0,.36);
-  white-space:nowrap;
+  object-fit:contain;
+  pointer-events:none;
+  user-select:none;
 }
 
 .isaiah-sound-toggle{
