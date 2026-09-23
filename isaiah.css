@@ -11,6 +11,7 @@
   border-radius:22px;
   background:#000;
   box-shadow:0 10px 28px rgba(22,50,39,.07);
+  container-type:inline-size;
 }
 
 .isaiah-video{
@@ -18,6 +19,128 @@
   width:100%;
   height:auto;
   background:#000;
+}
+
+.isaiah-poster-overlay{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  color:#25352d;
+}
+
+.isaiah-left-title{
+  position:absolute;
+  left:4.85%;
+  top:14.2%;
+  margin:0;
+  color:#20372c;
+  font-family:"DFKai-SB","BiauKai","KaiTi","STKaiti","Kaiti TC","Noto Serif TC",serif;
+  font-size:4.7cqw;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.03em;
+  white-space:nowrap;
+}
+
+.isaiah-gold-rule-top{
+  position:absolute;
+  left:5.15%;
+  top:29.15%;
+  width:6.8%;
+  height:.35cqw;
+  min-height:2px;
+  border-radius:999px;
+  background:#b29436;
+}
+
+.isaiah-verse{
+  position:absolute;
+  left:5.15%;
+  top:34.0%;
+  margin:0;
+  width:39.5%;
+  color:#27312d;
+  font-family:"PMingLiU","Songti TC","Noto Serif TC","Times New Roman",serif;
+  font-size:2.32cqw;
+  font-weight:500;
+  line-height:1.68;
+  letter-spacing:.015em;
+  white-space:nowrap;
+}
+
+.isaiah-citation{
+  position:absolute;
+  left:6.05%;
+  top:58.8%;
+  margin:0;
+  color:#303733;
+  font-family:"PMingLiU","Songti TC","Noto Serif TC","Times New Roman",serif;
+  font-size:1.95cqw;
+  font-weight:500;
+  line-height:1.2;
+  white-space:nowrap;
+}
+
+.isaiah-body-copy{
+  position:absolute;
+  left:5.85%;
+  top:67.2%;
+  margin:0;
+  width:41.5%;
+  color:#2d3632;
+  font-family:"PMingLiU","Songti TC","Noto Serif TC","Times New Roman",serif;
+  font-size:1.72cqw;
+  font-weight:500;
+  line-height:1.72;
+  letter-spacing:.015em;
+  white-space:nowrap;
+}
+
+.isaiah-gold-rule-bottom{
+  position:absolute;
+  left:10.0%;
+  top:91.55%;
+  width:33.0%;
+  height:.20cqw;
+  min-height:1px;
+  background:#b29436;
+  opacity:.9;
+}
+
+.isaiah-right-calligraphy{
+  position:absolute;
+  right:-1.2%;
+  top:61.0%;
+  margin:0;
+  color:#fff;
+  font-family:"DFKai-SB","BiauKai","KaiTi","STKaiti","Kaiti TC","Noto Serif TC",serif;
+  font-size:4.2cqw;
+  font-weight:500;
+  line-height:1.42;
+  letter-spacing:.08em;
+  text-shadow:0 2px 5px rgba(0,0,0,.32);
+  transform:rotate(-2deg);
+  transform-origin:center;
+  white-space:nowrap;
+}
+
+.isaiah-right-calligraphy .line2{
+  display:block;
+  margin-left:4.7cqw;
+}
+
+.isaiah-right-citation{
+  position:absolute;
+  right:1.0%;
+  top:88.0%;
+  margin:0;
+  color:rgba(255,255,255,.92);
+  font-family:"PMingLiU","Songti TC","Noto Serif TC","Times New Roman",serif;
+  font-size:1.55cqw;
+  line-height:1.2;
+  text-shadow:0 1px 4px rgba(0,0,0,.36);
+  white-space:nowrap;
 }
 
 .isaiah-sound-toggle{
