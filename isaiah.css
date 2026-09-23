@@ -123,6 +123,8 @@
   object-fit:contain;
   pointer-events:none;
   user-select:none;
+  filter:grayscale(1) contrast(1000%);
+  mix-blend-mode:screen;
 }
 
 .isaiah-sound-toggle{
