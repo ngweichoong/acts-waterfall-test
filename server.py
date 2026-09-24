@@ -102,6 +102,7 @@ def ensure_schema():
                                 diet VARCHAR(300) NOT NULL DEFAULT '',
                                 notes VARCHAR(800) NOT NULL DEFAULT '',
                                 dates TEXT[] NOT NULL,
+                                client_key VARCHAR(100),
                                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                                 is_visible BOOLEAN NOT NULL DEFAULT TRUE
                             )
@@ -109,8 +110,21 @@ def ensure_schema():
                         )
                         cur.execute(
                             """
+                            ALTER TABLE camp_registrations
+                            ADD COLUMN IF NOT EXISTS client_key VARCHAR(100)
+                            """
+                        )
+                        cur.execute(
+                            """
                             CREATE INDEX IF NOT EXISTS camp_registrations_created_at_idx
                             ON camp_registrations (created_at DESC)
+                            """
+                        )
+                        cur.execute(
+                            """
+                            CREATE UNIQUE INDEX IF NOT EXISTS camp_registrations_client_key_uidx
+                            ON camp_registrations (client_key)
+                            WHERE client_key IS NOT NULL
                             """
                         )
                 _schema_ready = True
@@ -289,6 +303,7 @@ def create_registration():
     diet = payload.get("diet", "")
     notes = payload.get("notes", "")
     dates = payload.get("dates")
+    client_key = payload.get("clientKey")
     adults = payload.get("adults")
     children = payload.get("children", 0)
 
@@ -298,6 +313,8 @@ def create_registration():
         return jsonify({"error": "報名文字欄位格式不正確。"}), 400
     if not isinstance(dates, list) or not dates:
         return jsonify({"error": "請至少選擇一個可以參加的星期六。"}), 400
+    if client_key is not None and not isinstance(client_key, str):
+        return jsonify({"error": "提交識別碼格式不正確。"}), 400
 
     try:
         adults = int(adults)
@@ -311,6 +328,9 @@ def create_registration():
     diet = diet.strip()
     notes = notes.strip()
     dates = sorted(set(str(d).strip() for d in dates))
+    client_key = client_key.strip() if isinstance(client_key, str) else None
+    if client_key == "":
+        client_key = None
 
     if not name or not phone:
         return jsonify({"error": "請填寫報名代表姓名和聯絡電話。"}), 400
@@ -328,6 +348,8 @@ def create_registration():
         return jsonify({"error": "參加人數超出合理範圍。"}), 400
     if any(d not in ALLOWED_CAMP_DATES for d in dates):
         return jsonify({"error": "包含不在本次活動範圍內的日期。"}), 400
+    if client_key is not None and len(client_key) > 100:
+        return jsonify({"error": "提交識別碼太長。"}), 400
     if rate_limited("registration:" + client_ip()):
         return jsonify({"error": "提交太頻繁，請稍等一下再試。"}), 429
 
@@ -337,12 +359,22 @@ def create_registration():
             cur.execute(
                 """
                 INSERT INTO camp_registrations
-                    (name, phone, adults, children, child_ages, diet, notes, dates)
+                    (name, phone, adults, children, child_ages, diet, notes, dates, client_key)
                 VALUES
-                    (%s, %s, %s, %s, %s, %s, %s, %s)
+                    (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (client_key) WHERE client_key IS NOT NULL
+                DO UPDATE SET
+                    name = EXCLUDED.name,
+                    phone = EXCLUDED.phone,
+                    adults = EXCLUDED.adults,
+                    children = EXCLUDED.children,
+                    child_ages = EXCLUDED.child_ages,
+                    diet = EXCLUDED.diet,
+                    notes = EXCLUDED.notes,
+                    dates = EXCLUDED.dates
                 RETURNING id, name, dates, created_at
                 """,
-                (name, phone, adults, children, child_ages, diet, notes, dates),
+                (name, phone, adults, children, child_ages, diet, notes, dates, client_key),
             )
             registration = serialize_registration_public(cur.fetchone())
 
