@@ -22,9 +22,21 @@ ALLOWED_ORIGINS = [
     ).split(",")
     if origin.strip()
 ]
-MAX_NAME_LENGTH = 20
+
+MAX_NAME_LENGTH = 80
 MAX_MESSAGE_LENGTH = 300
+MAX_PHONE_LENGTH = 40
+MAX_CHILD_AGES_LENGTH = 120
+MAX_DIET_LENGTH = 300
+MAX_NOTES_LENGTH = 800
 RATE_LIMIT_SECONDS = 20
+ALLOWED_CAMP_DATES = {
+    "2026-10-03",
+    "2026-10-10",
+    "2026-10-17",
+    "2026-10-24",
+    "2026-10-31",
+}
 
 app = Flask(__name__, static_folder=None)
 CORS(
@@ -77,6 +89,30 @@ def ensure_schema():
                             ON comments (created_at DESC)
                             """
                         )
+
+                        cur.execute(
+                            """
+                            CREATE TABLE IF NOT EXISTS camp_registrations (
+                                id BIGSERIAL PRIMARY KEY,
+                                name VARCHAR(80) NOT NULL,
+                                phone VARCHAR(40) NOT NULL,
+                                adults SMALLINT NOT NULL CHECK (adults >= 1 AND adults <= 20),
+                                children SMALLINT NOT NULL DEFAULT 0 CHECK (children >= 0 AND children <= 20),
+                                child_ages VARCHAR(120) NOT NULL DEFAULT '',
+                                diet VARCHAR(300) NOT NULL DEFAULT '',
+                                notes VARCHAR(800) NOT NULL DEFAULT '',
+                                dates TEXT[] NOT NULL,
+                                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                                is_visible BOOLEAN NOT NULL DEFAULT TRUE
+                            )
+                            """
+                        )
+                        cur.execute(
+                            """
+                            CREATE INDEX IF NOT EXISTS camp_registrations_created_at_idx
+                            ON camp_registrations (created_at DESC)
+                            """
+                        )
                 _schema_ready = True
                 return
             except Exception as exc:
@@ -84,7 +120,7 @@ def ensure_schema():
                 if attempt < 4:
                     time.sleep(1.5 * (attempt + 1))
 
-        raise RuntimeError("Unable to initialise comments database") from last_error
+        raise RuntimeError("Unable to initialise database") from last_error
 
 
 def client_ip():
@@ -94,19 +130,19 @@ def client_ip():
     return request.remote_addr or "unknown"
 
 
-def rate_limited(ip: str):
+def rate_limited(key: str):
     now = time.monotonic()
     with _rate_lock:
-        previous = _last_post_by_ip.get(ip)
+        previous = _last_post_by_ip.get(key)
         if previous is not None and now - previous < RATE_LIMIT_SECONDS:
             return True
-        _last_post_by_ip[ip] = now
+        _last_post_by_ip[key] = now
 
         if len(_last_post_by_ip) > 2000:
             cutoff = now - 3600
-            stale = [key for key, stamp in _last_post_by_ip.items() if stamp < cutoff]
-            for key in stale:
-                _last_post_by_ip.pop(key, None)
+            stale = [k for k, stamp in _last_post_by_ip.items() if stamp < cutoff]
+            for k in stale:
+                _last_post_by_ip.pop(k, None)
     return False
 
 
@@ -115,6 +151,15 @@ def serialize_comment(row):
         "id": row["id"],
         "name": row["name"],
         "message": row["message"],
+        "created_at": row["created_at"].isoformat(),
+    }
+
+
+def serialize_registration_public(row):
+    return {
+        "id": row["id"],
+        "name": row["name"],
+        "dates": row["dates"],
         "created_at": row["created_at"].isoformat(),
     }
 
@@ -188,11 +233,11 @@ def create_comment():
 
     if not name or not message:
         return jsonify({"error": "請填寫暱稱和留言內容。"}), 400
-    if len(name) > MAX_NAME_LENGTH:
-        return jsonify({"error": f"暱稱最多 {MAX_NAME_LENGTH} 個字元。"}), 400
+    if len(name) > 20:
+        return jsonify({"error": "暱稱最多 20 個字元。"}), 400
     if len(message) > MAX_MESSAGE_LENGTH:
         return jsonify({"error": f"留言最多 {MAX_MESSAGE_LENGTH} 個字元。"}), 400
-    if rate_limited(client_ip()):
+    if rate_limited("comment:" + client_ip()):
         return jsonify({"error": "留言太頻繁，請稍等一下再試。"}), 429
 
     ensure_schema()
@@ -209,6 +254,99 @@ def create_comment():
             comment = serialize_comment(cur.fetchone())
 
     return jsonify({"comment": comment}), 201
+
+
+@app.get("/api/registrations/public")
+def list_registrations_public():
+    ensure_schema()
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, name, dates, created_at
+                FROM camp_registrations
+                WHERE is_visible = TRUE
+                ORDER BY created_at ASC
+                LIMIT 200
+                """
+            )
+            registrations = [serialize_registration_public(row) for row in cur.fetchall()]
+    return jsonify({"registrations": registrations})
+
+
+@app.post("/api/registrations")
+def create_registration():
+    if not request.is_json:
+        return jsonify({"error": "請使用正確的報名格式。"}), 415
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify({"error": "報名格式不正確。"}), 400
+
+    name = payload.get("name")
+    phone = payload.get("phone")
+    child_ages = payload.get("childAges", "")
+    diet = payload.get("diet", "")
+    notes = payload.get("notes", "")
+    dates = payload.get("dates")
+    adults = payload.get("adults")
+    children = payload.get("children", 0)
+
+    if not isinstance(name, str) or not isinstance(phone, str):
+        return jsonify({"error": "請填寫報名代表姓名和聯絡電話。"}), 400
+    if not isinstance(child_ages, str) or not isinstance(diet, str) or not isinstance(notes, str):
+        return jsonify({"error": "報名文字欄位格式不正確。"}), 400
+    if not isinstance(dates, list) or not dates:
+        return jsonify({"error": "請至少選擇一個可以參加的星期六。"}), 400
+
+    try:
+        adults = int(adults)
+        children = int(children)
+    except (TypeError, ValueError):
+        return jsonify({"error": "參加人數格式不正確。"}), 400
+
+    name = name.strip()
+    phone = phone.strip()
+    child_ages = child_ages.strip()
+    diet = diet.strip()
+    notes = notes.strip()
+    dates = sorted(set(str(d).strip() for d in dates))
+
+    if not name or not phone:
+        return jsonify({"error": "請填寫報名代表姓名和聯絡電話。"}), 400
+    if len(name) > MAX_NAME_LENGTH:
+        return jsonify({"error": f"姓名最多 {MAX_NAME_LENGTH} 個字元。"}), 400
+    if len(phone) > MAX_PHONE_LENGTH:
+        return jsonify({"error": f"聯絡電話最多 {MAX_PHONE_LENGTH} 個字元。"}), 400
+    if len(child_ages) > MAX_CHILD_AGES_LENGTH:
+        return jsonify({"error": "兒童年齡欄位太長。"}), 400
+    if len(diet) > MAX_DIET_LENGTH:
+        return jsonify({"error": "飲食備註太長。"}), 400
+    if len(notes) > MAX_NOTES_LENGTH:
+        return jsonify({"error": "其他備註太長。"}), 400
+    if adults < 1 or adults > 20 or children < 0 or children > 20:
+        return jsonify({"error": "參加人數超出合理範圍。"}), 400
+    if any(d not in ALLOWED_CAMP_DATES for d in dates):
+        return jsonify({"error": "包含不在本次活動範圍內的日期。"}), 400
+    if rate_limited("registration:" + client_ip()):
+        return jsonify({"error": "提交太頻繁，請稍等一下再試。"}), 429
+
+    ensure_schema()
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO camp_registrations
+                    (name, phone, adults, children, child_ages, diet, notes, dates)
+                VALUES
+                    (%s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id, name, dates, created_at
+                """,
+                (name, phone, adults, children, child_ages, diet, notes, dates),
+            )
+            registration = serialize_registration_public(cur.fetchone())
+
+    return jsonify({"registration": registration}), 201
 
 
 @app.delete("/api/comments/<int:comment_id>")
