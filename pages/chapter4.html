@@ -1,1 +1,530 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>活動報名表｜微光同行 · 山嵐相聚</title><link rel="stylesheet" href="../flow.css"></head><body><header class="event-nav"><div class="inner"><a class="event-brand" href="../index.html"><span class="mount">⛰</span><span>微光同行 · 山嵐相聚</span></a><nav class="event-menu"><a href="../index.html">首頁</a><a href="chapter2.html">場地介紹</a><a href="chapter3.html">預算說明</a><a href="chapter6.html">常見問題</a><a class="nav-register" href="chapter4.html">我要報名</a></nav></div></header><main class="page"><div class="form-wrap"><section class="form-heading"><h1>活動報名表</h1><p>填寫以下資料，完成報名</p></section><form class="form-card" id="registrationForm"><div class="form-grid"><div class="field"><label>姓名 *</label><input required placeholder="請輸入姓名"></div><div class="field"><label>飲食注意事項</label><input placeholder="例如：素食、過敏等"></div><div class="field"><label>聯絡電話 *</label><input required placeholder="請輸入手機號碼"></div><div class="field"><label>是否有交通空位？</label><div class="checklist"><label><input type="checkbox"> 可以載其他人</label><label><input type="checkbox"> 需要搭車</label><label><input type="checkbox"> 不確定</label></div></div><div class="field"><label>性別 *</label><div class="choices"><label><input type="radio" name="gender" required> 男</label><label><input type="radio" name="gender"> 女</label></div></div><div class="field"><label>其他備註</label><textarea placeholder="請填寫其他需要讓我們知道的事項"></textarea></div><div class="field"><label>住宿安排 *</label><select required><option value="">請選擇</option><option>雙人帳</option><option>夫妻同帳</option><option>自行安排</option></select><small style="font-size:10px;color:#81908a">例如：與誰同帳篷</small></div></div><p class="form-consent"><label><input type="checkbox" required> 我已閱讀並同意活動注意事項</label></p><div class="form-action"><button class="btn btn-green" type="submit">提交報名</button></div><p class="form-consent">本地 Prototype 不儲存個人資料。正式上線前會接安全後端。</p></form></div></main><script src="../flow.js"></script></body></html>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>我有興趣 · 我要報名｜微光同行 · 山嵐相聚</title>
+  <link rel="stylesheet" href="../flow.css">
+  <style>
+    .reg-page{max-width:1080px}
+    .reg-hero{
+      text-align:center;
+      padding:34px 20px 26px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:linear-gradient(135deg,#eef4e9,#fffaf1);
+      margin-bottom:20px;
+    }
+    .reg-kicker{font-size:12px;letter-spacing:.18em;font-weight:900;color:#6e8a67}
+    .reg-hero h1{font-size:36px;line-height:1.2;margin:8px 0 10px;color:#213a33}
+    .reg-hero p{margin:0 auto;max-width:720px;color:#69766f;font-size:15.5px;line-height:1.85}
+    .reg-section{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:25px;
+      margin:18px 0;
+      box-shadow:0 8px 24px rgba(22,50,39,.05);
+    }
+    .reg-section.soft{background:#f7f9f3}
+    .reg-section.warn{
+      background:#fff8ed;
+      border-color:#efd8b8;
+    }
+    .reg-section.dark{
+      background:#173b35;
+      border-color:#173b35;
+      color:#fff;
+    }
+    .sec-head{display:flex;align-items:flex-start;gap:13px;margin-bottom:16px}
+    .sec-no{
+      width:42px;height:42px;flex:0 0 auto;
+      border-radius:11px;
+      display:grid;place-items:center;
+      background:#edf3e8;color:#426b42;font-weight:900;
+    }
+    .sec-head h2{font-size:25px;margin:0;color:#213a33}
+    .sec-head p{font-size:14px;line-height:1.7;color:#748079;margin:5px 0 0}
+    .reg-section.dark .sec-head h2,.reg-section.dark .sec-head p{color:#fff}
+    .first-note{font-size:16px;line-height:1.95;color:#58675f;margin:0}
+    .big-line{
+      margin-top:17px;padding:14px 16px;border-radius:12px;
+      background:#173b35;color:#fff;text-align:center;
+      font-weight:900;font-size:19px;
+    }
+    .family-note{
+      display:grid;grid-template-columns:58px 1fr;gap:14px;
+      align-items:start;
+      padding:18px;border-radius:14px;background:#fff;border:1px solid #e1e7df;
+    }
+    .family-note .ico{font-size:34px}
+    .family-note h3{margin:0 0 6px;font-size:18px}
+    .family-note p{margin:0;color:#64726a;font-size:14.5px;line-height:1.8}
+    .haze-box{
+      display:grid;grid-template-columns:58px 1fr;gap:14px;align-items:start;
+    }
+    .haze-box .ico{font-size:36px}
+    .haze-box h3{margin:0 0 7px;color:#7d4d22;font-size:19px}
+    .haze-box p{margin:0;color:#745f4b;font-size:14.5px;line-height:1.85}
+    .form-card-new{padding:0;border:0;background:transparent}
+    .form-grid-new{display:grid;grid-template-columns:1fr 1fr;gap:16px 22px}
+    .field-new{display:flex;flex-direction:column;gap:7px}
+    .field-new.full{grid-column:1/-1}
+    .field-new label{font-size:14px;font-weight:850;color:#344b42}
+    .field-new input,.field-new select,.field-new textarea{
+      width:100%;border:1px solid #d8dfd6;border-radius:9px;
+      padding:11px 12px;background:#fff;color:#213a33;font-size:14.5px;
+    }
+    .field-new textarea{min-height:88px;resize:vertical}
+    .field-help{font-size:12px;color:#7b8781;line-height:1.6}
+    .people-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+    .people-summary{
+      margin-top:14px;padding:14px 16px;border-radius:12px;background:#edf3e8;
+      font-size:14px;color:#466149;
+    }
+    .dates-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+    .date-option{
+      position:relative;
+      display:flex;flex-direction:column;gap:4px;
+      padding:14px 12px;border:1px solid #dfe5dc;border-radius:12px;
+      background:#fff;cursor:pointer;transition:.15s ease;
+    }
+    .date-option:hover{border-color:#92ac8b;transform:translateY(-1px)}
+    .date-option input{position:absolute;right:10px;top:10px}
+    .date-option strong{font-size:17px;color:#29453a}
+    .date-option span{font-size:12px;color:#7c8782}
+    .date-note{margin-top:13px;font-size:13px;line-height:1.75;color:#68766f}
+    .availability-wrap{overflow:auto;border:1px solid #e0e6de;border-radius:14px;background:#fff}
+    .availability-table{width:100%;border-collapse:collapse;min-width:760px}
+    .availability-table th,.availability-table td{
+      padding:12px 13px;border-bottom:1px solid #e8ece6;text-align:left;font-size:13.5px;
+    }
+    .availability-table th{background:#eef3ee;color:#405349}
+    .availability-table td.center,.availability-table th.center{text-align:center}
+    .availability-table tr:last-child td{border-bottom:0}
+    .availability-empty{padding:20px;color:#7b8781;text-align:center;font-size:14px}
+    .availability-cards{
+      display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px;
+    }
+    .availability-card{
+      padding:13px;border-radius:12px;background:#f7f9f5;border:1px solid #e1e6df;text-align:center;
+    }
+    .availability-card strong{display:block;color:#426b42;font-size:23px}
+    .availability-card span{display:block;font-size:12px;color:#748079;margin-top:2px}
+    .decision{
+      margin-top:15px;padding:14px 16px;border-left:4px solid #d6ad54;
+      background:#fffaf0;color:#5f685f;font-size:14.5px;line-height:1.8;
+    }
+    .budget-reminder{display:grid;grid-template-columns:.75fr 1.25fr;gap:18px;align-items:center}
+    .budget-number{
+      text-align:center;padding:20px;border-radius:14px;background:#173b35;color:#fff;
+    }
+    .budget-number strong{display:block;font-size:34px}
+    .budget-number span{font-size:13px;opacity:.8}
+    .budget-list{font-size:14px;line-height:1.9;color:#627169}
+    .consents{display:grid;gap:10px}
+    .consent-row{
+      display:flex;gap:10px;align-items:flex-start;
+      padding:13px 14px;border:1px solid #e0e6de;border-radius:11px;background:#fff;
+      color:#526159;font-size:13.5px;line-height:1.7;
+    }
+    .consent-row input{margin-top:4px}
+    .preview-box{
+      margin-top:14px;padding:14px 16px;border-radius:12px;background:#eef3e9;
+      color:#4e6256;font-size:14px;line-height:1.75;display:none;
+    }
+    .submit-area{text-align:center;margin-top:18px}
+    .submit-area .btn{min-width:210px}
+    .privacy-note{font-size:11.5px;color:#849089;text-align:center;margin:10px 0 0;line-height:1.6}
+    .test-note{
+      margin-top:12px;padding:11px 13px;border-radius:10px;background:#fff4e8;
+      color:#7a654f;font-size:12px;line-height:1.65;
+    }
+    @media(max-width:860px){
+      .dates-grid,.availability-cards{grid-template-columns:1fr 1fr}
+      .budget-reminder{grid-template-columns:1fr}
+    }
+    @media(max-width:680px){
+      .reg-page{width:min(100% - 20px,1080px)}
+      .reg-section{padding:19px}
+      .reg-hero h1{font-size:29px}
+      .form-grid-new,.people-grid{grid-template-columns:1fr}
+      .dates-grid,.availability-cards{grid-template-columns:1fr}
+      .family-note,.haze-box{grid-template-columns:1fr}
+      .sec-head h2{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <header class="event-nav">
+    <div class="inner">
+      <a class="event-brand" href="../index.html"><span class="mount">⛰</span><span>微光同行 · 山嵐相聚</span></a>
+      <nav class="event-menu">
+        <a href="../index.html">首頁</a>
+        <a href="chapter2.html">場地介紹</a>
+        <a href="chapter3.html">預算說明</a>
+        <a href="chapter6.html">常見問題</a>
+        <a class="nav-register active" href="chapter4.html">我要報名</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page reg-page">
+    <section class="reg-hero">
+      <div class="reg-kicker">CHAPTER 4 · REGISTRATION</div>
+      <h1>我有興趣 · 我要報名</h1>
+      <p>先告訴我們你的家庭人數與十月份可以參加的星期六。最後日期會以最多家庭能參加的日期為優先，再確認場地與設備。</p>
+    </section>
+
+    <section class="reg-section" id="first-time">
+      <div class="sec-head">
+        <div class="sec-no">01</div>
+        <div>
+          <h2>這是我們第一次一起辦露營活動</h2>
+          <p>有些事情，我們可能只有真正一起去做了，才會知道需要怎樣調整。</p>
+        </div>
+      </div>
+      <p class="first-note">
+        這是教會第一次以這樣的方式舉辦家庭露營活動。過程中可能會遇到一些事前沒有預料到的情況，
+        也可能有需要臨時調整、一起處理的問題。我們希望大家帶著耐心、包容和彼此配合的心，
+        遇到未知的情況時一起溝通、一起調整，也一起把問題解決。
+        這本身也是團契生活的一部分：不只是享受活動，也學習彼此體諒、彼此幫助。
+      </p>
+      <div class="big-line">第一次不一定完美，但我們可以一起把它做好。</div>
+    </section>
+
+    <section class="reg-section soft" id="children">
+      <div class="sec-head">
+        <div class="sec-no">02</div>
+        <div>
+          <h2>有孩子也可以一起參加</h2>
+          <p>只要提前讓我們知道，就可以比較早安排。</p>
+        </div>
+      </div>
+      <div class="family-note">
+        <div class="ico">👨‍👩‍👧</div>
+        <div>
+          <h3>孩子人數與年齡請在報名時填寫</h3>
+          <p>有孩子的家庭可以一起參加。請提前告訴我們孩子的人數及年齡，讓我們可以在營位、設備與活動安排上預先考量。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="reg-section warn" id="haze">
+      <div class="sec-head">
+        <div class="sec-no">03</div>
+        <div>
+          <h2>煙霾與戶外安全</h2>
+          <p>這次活動只會在適合戶外活動的情況下進行。</p>
+        </div>
+      </div>
+      <div class="haze-box">
+        <div class="ico">🌫️</div>
+        <div>
+          <h3>如果十月份出現嚴重煙霾，活動將取消</h3>
+          <p>
+            我們會在活動前留意官方空氣品質資料與實際環境情況。
+            如果煙霾嚴重、空氣品質不適合戶外活動，這次露營計劃將取消。
+            我們會以參加者的健康與安全為優先，不會在不適合的空氣環境下勉強進行活動。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <form id="registrationForm" class="form-card-new">
+      <section class="reg-section" id="details">
+        <div class="sec-head">
+          <div class="sec-no">04</div>
+          <div>
+            <h2>告訴我們誰會一起參加</h2>
+            <p>聯絡資料不會公開；公開的日期統計只顯示報名代表名稱與可參加日期。</p>
+          </div>
+        </div>
+
+        <div class="form-grid-new">
+          <div class="field-new">
+            <label for="repName">家庭 / 報名代表姓名 *</label>
+            <input id="repName" name="repName" required placeholder="例如：Joshua 家庭">
+          </div>
+
+          <div class="field-new">
+            <label for="phone">聯絡電話 *</label>
+            <input id="phone" name="phone" required inputmode="tel" placeholder="請輸入手機號碼">
+          </div>
+
+          <div class="field-new">
+            <label for="diet">飲食過敏 / 特別需要</label>
+            <input id="diet" name="diet" placeholder="例如：素食、海鮮過敏">
+          </div>
+
+          <div class="field-new">
+            <label for="childAges">如有兒童：年齡</label>
+            <input id="childAges" name="childAges" placeholder="例如：6 歲、9 歲">
+          </div>
+
+          <div class="field-new full">
+            <label for="notes">其他需要提前知道的事項</label>
+            <textarea id="notes" name="notes" placeholder="例如：行動需要、設備安排、其他備註"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="reg-section soft" id="people">
+        <div class="sec-head">
+          <div class="sec-no">05</div>
+          <div>
+            <h2>你們家庭預計有多少人參加？</h2>
+            <p>目前活動預算以 5 個家庭、10 人為基準，實際費用會按最終人數再確認。</p>
+          </div>
+        </div>
+
+        <div class="people-grid">
+          <div class="field-new">
+            <label for="adults">成人 *</label>
+            <input id="adults" name="adults" type="number" min="1" max="10" value="2" required>
+          </div>
+          <div class="field-new">
+            <label for="childrenCount">兒童</label>
+            <input id="childrenCount" name="childrenCount" type="number" min="0" max="10" value="0">
+          </div>
+          <div class="field-new">
+            <label for="totalPeople">預計總人數</label>
+            <input id="totalPeople" name="totalPeople" value="2" readonly>
+          </div>
+        </div>
+
+        <div class="people-summary">
+          目前參考預算：<strong>約 RM140 / 人</strong>。最終費用會根據實際家庭數、參加人數及最終安排重新確認。
+        </div>
+      </section>
+
+      <section class="reg-section" id="dates">
+        <div class="sec-head">
+          <div class="sec-no">06</div>
+          <div>
+            <h2>请选择十月份你可以参加的星期六</h2>
+            <p>可以选择一个或多个日期；如果整个十月的星期六都可以，也可以全部勾选。</p>
+          </div>
+        </div>
+
+        <div class="dates-grid">
+          <label class="date-option">
+            <input type="checkbox" name="dates" value="2026-10-03">
+            <strong>10月3日</strong><span>星期六</span>
+          </label>
+          <label class="date-option">
+            <input type="checkbox" name="dates" value="2026-10-10">
+            <strong>10月10日</strong><span>星期六</span>
+          </label>
+          <label class="date-option">
+            <input type="checkbox" name="dates" value="2026-10-17">
+            <strong>10月17日</strong><span>星期六</span>
+          </label>
+          <label class="date-option">
+            <input type="checkbox" name="dates" value="2026-10-24">
+            <strong>10月24日</strong><span>星期六</span>
+          </label>
+          <label class="date-option">
+            <input type="checkbox" name="dates" value="2026-10-31">
+            <strong>10月31日</strong><span>星期六</span>
+          </label>
+        </div>
+
+        <div class="date-note">
+          请勾选<strong>所有</strong>你能够参加的日期。最后会以最多家庭能够参加的星期六为优先，
+          再确认 Camp Bakau 场地与 EasyCamp 设备 availability。
+        </div>
+
+        <div id="selectionPreview" class="preview-box"></div>
+      </section>
+
+      <section class="reg-section soft" id="availability">
+        <div class="sec-head">
+          <div class="sec-no">07</div>
+          <div>
+            <h2>大家目前什么时候有空？</h2>
+            <p>这里只公开报名代表名称与可参加日期，不显示电话、儿童资料或其他个人备注。</p>
+          </div>
+        </div>
+
+        <div id="availabilityTableWrap"></div>
+        <div id="availabilityCards" class="availability-cards"></div>
+
+        <div class="decision">
+          <strong>最终日期怎么决定？</strong><br>
+          报名收集完成后，会以<strong>最多家庭能够参加的星期六</strong>作为优先。
+          如果两个或以上日期人数接近，再根据 Camp Bakau 场地与 EasyCamp 设备的实际 availability 作最后确认。
+          上面的数字只是当前报名情况，并不代表最终日期已经确定。
+        </div>
+
+        <div class="test-note">
+          测试站说明：目前报名统计只保存在这台浏览器，用来测试版面和流程；正式启用共享报名资料后，才会显示所有家庭的真实报名结果。
+        </div>
+      </section>
+
+      <section class="reg-section" id="budget-reminder">
+        <div class="sec-head">
+          <div class="sec-no">08</div>
+          <div>
+            <h2>费用提醒</h2>
+            <p>报名之前，再确认一次目前的预算基础。</p>
+          </div>
+        </div>
+
+        <div class="budget-reminder">
+          <div class="budget-number">
+            <span>目前预计</span>
+            <strong>RM140 / 人</strong>
+            <span>5 家庭 · 10 人 · 2D1N</span>
+          </div>
+          <div class="budget-list">
+            包括：Camp Bakau 场地、Admission、每家庭 Ango Air Package、Basic Cooking Set，以及 RM20 / 人的 BBQ Fund。<br>
+            不包括：各家庭自己的晚餐、早餐、个人饮料及特别饮食需要。<br>
+            <strong>最终金额会根据实际参加人数与最终安排确认。</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="reg-section dark" id="confirm">
+        <div class="sec-head">
+          <div class="sec-no" style="background:rgba(255,255,255,.12);color:#fff">09</div>
+          <div>
+            <h2>确认并提交</h2>
+            <p>我们先收集大家的 availability，再一起决定最适合的日期。</p>
+          </div>
+        </div>
+
+        <div class="consents">
+          <label class="consent-row">
+            <input id="consentFirst" type="checkbox" required>
+            <span>我了解这是第一次举办的露营活动，过程中可能出现需要共同调整和解决的情况，并愿意以包容、耐心、沟通和合作的方式一起参与。</span>
+          </label>
+          <label class="consent-row">
+            <input id="consentDate" type="checkbox" required>
+            <span>我了解最终活动日期会根据整体报名结果、场地与设备 availability 决定；如十月份出现严重烟霾或空气品质不适合户外活动，露营计划将取消。</span>
+          </label>
+        </div>
+
+        <div class="submit-area">
+          <button class="btn btn-green" type="submit">我有兴趣 · 提交报名 →</button>
+        </div>
+        <p class="privacy-note">联络电话、儿童年龄、饮食与备注不会显示在公开日期统计中。</p>
+      </section>
+    </form>
+  </main>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = 'actsCampRegistrationsV1';
+      const DATE_LABELS = {
+        '2026-10-03':'10月3日',
+        '2026-10-10':'10月10日',
+        '2026-10-17':'10月17日',
+        '2026-10-24':'10月24日',
+        '2026-10-31':'10月31日'
+      };
+
+      const form = document.getElementById('registrationForm');
+      const adults = document.getElementById('adults');
+      const children = document.getElementById('childrenCount');
+      const total = document.getElementById('totalPeople');
+      const preview = document.getElementById('selectionPreview');
+
+      const load = () => {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      };
+
+      const save = (rows) => localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+
+      const updatePeople = () => {
+        const a = Math.max(0, Number(adults.value || 0));
+        const c = Math.max(0, Number(children.value || 0));
+        total.value = a + c;
+      };
+
+      const selectedDates = () => [...document.querySelectorAll('input[name="dates"]:checked')].map(x => x.value);
+
+      const updatePreview = () => {
+        const dates = selectedDates();
+        if (!dates.length) {
+          preview.style.display = 'none';
+          preview.textContent = '';
+          return;
+        }
+        preview.style.display = 'block';
+        preview.innerHTML = '<strong>你目前选择：</strong> ' + dates.map(d => DATE_LABELS[d]).join('、');
+      };
+
+      const renderAvailability = () => {
+        const rows = load();
+        const wrap = document.getElementById('availabilityTableWrap');
+        const cards = document.getElementById('availabilityCards');
+
+        if (!rows.length) {
+          wrap.innerHTML = '<div class="availability-empty">目前还没有测试报名资料。</div>';
+        } else {
+          const head = Object.keys(DATE_LABELS).map(d => '<th class="center">' + DATE_LABELS[d] + '</th>').join('');
+          const body = rows.map(r => {
+            const cells = Object.keys(DATE_LABELS).map(d => '<td class="center">' + (r.dates.includes(d) ? '✓' : '—') + '</td>').join('');
+            return '<tr><td><strong>' + escapeHtml(r.name) + '</strong></td>' + cells + '</tr>';
+          }).join('');
+          wrap.innerHTML =
+            '<div class="availability-wrap"><table class="availability-table"><thead><tr><th>家庭 / 报名代表</th>' +
+            head + '</tr></thead><tbody>' + body + '</tbody></table></div>';
+        }
+
+        cards.innerHTML = Object.entries(DATE_LABELS).map(([d,label]) => {
+          const count = rows.filter(r => r.dates.includes(d)).length;
+          const names = rows.filter(r => r.dates.includes(d)).map(r => r.name).join('、');
+          return '<div class="availability-card"><strong>' + count + '</strong><span>' + label + ' 可参加家庭</span>' +
+            (names ? '<span>' + escapeHtml(names) + '</span>' : '') + '</div>';
+        }).join('');
+      };
+
+      const escapeHtml = (s) => String(s ?? '')
+        .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+        .replaceAll('"','&quot;').replaceAll("'",'&#039;');
+
+      adults.addEventListener('input', updatePeople);
+      children.addEventListener('input', updatePeople);
+      document.querySelectorAll('input[name="dates"]').forEach(x => x.addEventListener('change', updatePreview));
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const dates = selectedDates();
+        if (!dates.length) {
+          alert('请至少选择一个十月份可以参加的星期六。');
+          return;
+        }
+
+        const entry = {
+          id: Date.now(),
+          name: document.getElementById('repName').value.trim(),
+          phone: document.getElementById('phone').value.trim(),
+          adults: Number(adults.value || 0),
+          children: Number(children.value || 0),
+          childAges: document.getElementById('childAges').value.trim(),
+          diet: document.getElementById('diet').value.trim(),
+          notes: document.getElementById('notes').value.trim(),
+          dates
+        };
+
+        const rows = load();
+        rows.push(entry);
+        save(rows);
+        localStorage.setItem('actsCampLatestRegistration', JSON.stringify(entry));
+        location.href = 'chapter5.html';
+      });
+
+      updatePeople();
+      updatePreview();
+      renderAvailability();
+    })();
+  </script>
+</body>
+</html>
