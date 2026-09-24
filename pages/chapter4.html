@@ -416,6 +416,7 @@
   <script>
     (() => {
       const API_BASE = 'https://acts-waterfall-test-api-production.up.railway.app';
+      const LEGACY_STORAGE_KEY = 'actsCampRegistrationsV1';
       const DATE_LABELS = {
         '2026-10-03':'10月3日',
         '2026-10-10':'10月10日',
@@ -452,6 +453,51 @@
         }
         preview.style.display = 'block';
         preview.innerHTML = '<strong>你目前選擇：</strong> ' + dates.map(d => DATE_LABELS[d]).join('、');
+      };
+
+      const submitRegistration = async (entry) => {
+        const response = await fetch(API_BASE + '/api/registrations', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(entry)
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || '提交失敗，請稍後再試。');
+        return data.registration;
+      };
+
+      const migrateLegacyRegistrations = async () => {
+        let legacy = [];
+        try {
+          const raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+          legacy = raw ? JSON.parse(raw) : [];
+          if (!Array.isArray(legacy) || !legacy.length) return;
+        } catch {
+          return;
+        }
+
+        let allSucceeded = true;
+        for (const row of legacy) {
+          try {
+            await submitRegistration({
+              name:String(row.name || '').trim(),
+              phone:String(row.phone || '').trim(),
+              adults:Number(row.adults || 1),
+              children:Number(row.children || 0),
+              childAges:String(row.childAges || '').trim(),
+              diet:String(row.diet || '').trim(),
+              notes:String(row.notes || '').trim(),
+              dates:Array.isArray(row.dates) ? row.dates : [],
+              clientKey:'legacy-' + String(row.id || row.name || Date.now())
+            });
+          } catch {
+            allSucceeded = false;
+          }
+        }
+
+        if (allSucceeded) {
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
+        }
       };
 
       const fetchRegistrations = async () => {
@@ -516,24 +562,19 @@
           childAges: document.getElementById('childAges').value.trim(),
           diet: document.getElementById('diet').value.trim(),
           notes: document.getElementById('notes').value.trim(),
-          dates
+          dates,
+          clientKey:(crypto.randomUUID ? crypto.randomUUID() : 'web-' + Date.now() + '-' + Math.random().toString(16).slice(2))
         };
 
         submitButton.disabled = true;
         submitButton.textContent = '正在提交…';
 
         try {
-          const response = await fetch(API_BASE + '/api/registrations', {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify(entry)
-          });
-          const data = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(data.error || '提交失敗，請稍後再試。');
+          const registration = await submitRegistration(entry);
 
           sessionStorage.setItem('actsCampLatestRegistration', JSON.stringify({
             ...entry,
-            id:data.registration?.id ?? null
+            id:registration?.id ?? null
           }));
           location.href = 'chapter5.html';
         } catch (error) {
@@ -545,7 +586,7 @@
 
       updatePeople();
       updatePreview();
-      renderAvailability();
+      migrateLegacyRegistrations().finally(renderAvailability);
     })();
   </script>
 </body>
