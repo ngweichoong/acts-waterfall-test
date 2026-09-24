@@ -358,7 +358,7 @@
         </div>
 
         <div class="test-note">
-          测试站说明：目前报名统计只保存在这台浏览器，用来测试版面和流程；正式启用共享报名资料后，才会显示所有家庭的真实报名结果。
+          報名資料會儲存在共享的 Railway 資料庫。任何手機或電腦重新打開這個頁面，都會看到最新的公開日期統計；聯絡電話、兒童資料、飲食與備註不會公開。
         </div>
       </section>
 
@@ -415,7 +415,7 @@
 
   <script>
     (() => {
-      const STORAGE_KEY = 'actsCampRegistrationsV1';
+      const API_BASE = 'https://acts-waterfall-test-api-production.up.railway.app';
       const DATE_LABELS = {
         '2026-10-03':'10月3日',
         '2026-10-10':'10月10日',
@@ -429,17 +429,11 @@
       const children = document.getElementById('childrenCount');
       const total = document.getElementById('totalPeople');
       const preview = document.getElementById('selectionPreview');
+      const submitButton = form.querySelector('button[type="submit"]');
 
-      const load = () => {
-        try {
-          const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return [];
-        }
-      };
-
-      const save = (rows) => localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+      const escapeHtml = (s) => String(s ?? '')
+        .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+        .replaceAll('"','&quot;').replaceAll("'",'&#039;');
 
       const updatePeople = () => {
         const a = Math.max(0, Number(adults.value || 0));
@@ -457,53 +451,64 @@
           return;
         }
         preview.style.display = 'block';
-        preview.innerHTML = '<strong>你目前选择：</strong> ' + dates.map(d => DATE_LABELS[d]).join('、');
+        preview.innerHTML = '<strong>你目前選擇：</strong> ' + dates.map(d => DATE_LABELS[d]).join('、');
       };
 
-      const renderAvailability = () => {
-        const rows = load();
+      const fetchRegistrations = async () => {
+        const response = await fetch(API_BASE + '/api/registrations/public', { cache:'no-store' });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || '暫時無法讀取報名資料。');
+        return Array.isArray(data.registrations) ? data.registrations : [];
+      };
+
+      const renderAvailability = async () => {
         const wrap = document.getElementById('availabilityTableWrap');
         const cards = document.getElementById('availabilityCards');
+        wrap.innerHTML = '<div class="availability-empty">正在讀取最新報名資料…</div>';
+        cards.innerHTML = '';
 
-        if (!rows.length) {
-          wrap.innerHTML = '<div class="availability-empty">目前还没有测试报名资料。</div>';
-        } else {
-          const head = Object.keys(DATE_LABELS).map(d => '<th class="center">' + DATE_LABELS[d] + '</th>').join('');
-          const body = rows.map(r => {
-            const cells = Object.keys(DATE_LABELS).map(d => '<td class="center">' + (r.dates.includes(d) ? '✓' : '—') + '</td>').join('');
-            return '<tr><td><strong>' + escapeHtml(r.name) + '</strong></td>' + cells + '</tr>';
+        try {
+          const rows = await fetchRegistrations();
+
+          if (!rows.length) {
+            wrap.innerHTML = '<div class="availability-empty">目前還沒有家庭提交報名。</div>';
+          } else {
+            const head = Object.keys(DATE_LABELS).map(d => '<th class="center">' + DATE_LABELS[d] + '</th>').join('');
+            const body = rows.map(r => {
+              const dates = Array.isArray(r.dates) ? r.dates : [];
+              const cells = Object.keys(DATE_LABELS).map(d => '<td class="center">' + (dates.includes(d) ? '✓' : '—') + '</td>').join('');
+              return '<tr><td><strong>' + escapeHtml(r.name) + '</strong></td>' + cells + '</tr>';
+            }).join('');
+            wrap.innerHTML =
+              '<div class="availability-wrap"><table class="availability-table"><thead><tr><th>家庭 / 報名代表</th>' +
+              head + '</tr></thead><tbody>' + body + '</tbody></table></div>';
+          }
+
+          cards.innerHTML = Object.entries(DATE_LABELS).map(([d,label]) => {
+            const matching = rows.filter(r => Array.isArray(r.dates) && r.dates.includes(d));
+            const names = matching.map(r => r.name).join('、');
+            return '<div class="availability-card"><strong>' + matching.length + '</strong><span>' + label + ' 可參加家庭</span>' +
+              (names ? '<span>' + escapeHtml(names) + '</span>' : '') + '</div>';
           }).join('');
-          wrap.innerHTML =
-            '<div class="availability-wrap"><table class="availability-table"><thead><tr><th>家庭 / 报名代表</th>' +
-            head + '</tr></thead><tbody>' + body + '</tbody></table></div>';
+        } catch (error) {
+          wrap.innerHTML = '<div class="availability-empty">暫時無法連接共享報名資料，請稍後重新整理頁面。</div>';
+          cards.innerHTML = '';
         }
-
-        cards.innerHTML = Object.entries(DATE_LABELS).map(([d,label]) => {
-          const count = rows.filter(r => r.dates.includes(d)).length;
-          const names = rows.filter(r => r.dates.includes(d)).map(r => r.name).join('、');
-          return '<div class="availability-card"><strong>' + count + '</strong><span>' + label + ' 可参加家庭</span>' +
-            (names ? '<span>' + escapeHtml(names) + '</span>' : '') + '</div>';
-        }).join('');
       };
-
-      const escapeHtml = (s) => String(s ?? '')
-        .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
-        .replaceAll('"','&quot;').replaceAll("'",'&#039;');
 
       adults.addEventListener('input', updatePeople);
       children.addEventListener('input', updatePeople);
       document.querySelectorAll('input[name="dates"]').forEach(x => x.addEventListener('change', updatePreview));
 
-      form.addEventListener('submit', (e) => {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const dates = selectedDates();
         if (!dates.length) {
-          alert('请至少选择一个十月份可以参加的星期六。');
+          alert('請至少選擇一個十月份可以參加的星期六。');
           return;
         }
 
         const entry = {
-          id: Date.now(),
           name: document.getElementById('repName').value.trim(),
           phone: document.getElementById('phone').value.trim(),
           adults: Number(adults.value || 0),
@@ -514,11 +519,28 @@
           dates
         };
 
-        const rows = load();
-        rows.push(entry);
-        save(rows);
-        localStorage.setItem('actsCampLatestRegistration', JSON.stringify(entry));
-        location.href = 'chapter5.html';
+        submitButton.disabled = true;
+        submitButton.textContent = '正在提交…';
+
+        try {
+          const response = await fetch(API_BASE + '/api/registrations', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(entry)
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(data.error || '提交失敗，請稍後再試。');
+
+          sessionStorage.setItem('actsCampLatestRegistration', JSON.stringify({
+            ...entry,
+            id:data.registration?.id ?? null
+          }));
+          location.href = 'chapter5.html';
+        } catch (error) {
+          alert(error.message || '提交失敗，請稍後再試。');
+          submitButton.disabled = false;
+          submitButton.textContent = '我有興趣 · 提交報名 →';
+        }
       });
 
       updatePeople();
