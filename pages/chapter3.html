@@ -70,15 +70,12 @@
       border-radius:16px;
       overflow:hidden;
       background:#fff;
-      min-height:560px;
-      position:relative;
     }
-    .easycamp-frame iframe{
+    .easycamp-frame img{
       width:100%;
-      height:560px;
-      border:0;
+      height:auto;
       display:block;
-      background:#fff;
+      object-fit:contain;
     }
     .easycamp-note{
       margin:10px 0 0;
@@ -201,7 +198,7 @@
       .gear-grid,.bbq-layout,.timeline{grid-template-columns:1fr}
       .three-cards,.spend-grid{grid-template-columns:1fr}
       .venue-cards,.budget-highlight{grid-template-columns:1fr}
-      .easycamp-frame,.easycamp-frame iframe{min-height:480px;height:480px}
+      .easycamp-frame img{width:100%;height:auto}
     }
     @media(max-width:620px){
       .chapter3-page{width:min(100% - 20px,1180px)}
@@ -268,17 +265,11 @@
 
       <div class="gear-grid">
         <div>
-          <div class="easycamp-frame" aria-label="EasyCamp 官方 Naturehike Ango Air 套餐">
-            <iframe
-              title="EasyCamp Naturehike Ango Air 官方套餐"
-              src="https://easycamp.my/#packages"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-            ></iframe>
+          <div class="easycamp-frame" aria-label="EasyCamp Naturehike Ango Air 套餐設備圖">
+            <img src="../assets/easycamp-ango-air-package.webp" alt="EasyCamp Naturehike Ango Air 2D1N 套餐與設備內容" loading="lazy">
           </div>
           <p class="easycamp-note">
-            上方內容直接連結 EasyCamp 官方網站的 Complete Packages 區域，不使用截圖。
-            若瀏覽器阻擋嵌入，可直接前往 <a href="https://easycamp.my/#packages" target="_blank" rel="noopener">EasyCamp 官方套餐頁</a> 查看 Naturehike Ango Air 高清原圖。
+            EasyCamp Ango Air 套餐設備示意。實際設備及套餐內容以 EasyCamp Rental 提供為準。
           </p>
         </div>
 
