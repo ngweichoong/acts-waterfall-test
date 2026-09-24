@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hmac
 import os
+import re
 import threading
 import time
 from pathlib import Path
@@ -324,6 +325,7 @@ def create_registration():
 
     name = name.strip()
     phone = phone.strip()
+    phone_key = re.sub(r"\D", "", phone)
     child_ages = child_ages.strip()
     diet = diet.strip()
     notes = notes.strip()
@@ -338,6 +340,8 @@ def create_registration():
         return jsonify({"error": f"姓名最多 {MAX_NAME_LENGTH} 個字元。"}), 400
     if len(phone) > MAX_PHONE_LENGTH:
         return jsonify({"error": f"聯絡電話最多 {MAX_PHONE_LENGTH} 個字元。"}), 400
+    if len(phone_key) < 7:
+        return jsonify({"error": "請填寫有效的聯絡電話。"}), 400
     if len(child_ages) > MAX_CHILD_AGES_LENGTH:
         return jsonify({"error": "兒童年齡欄位太長。"}), 400
     if len(diet) > MAX_DIET_LENGTH:
@@ -358,24 +362,68 @@ def create_registration():
         with conn.cursor() as cur:
             cur.execute(
                 """
-                INSERT INTO camp_registrations
-                    (name, phone, adults, children, child_ages, diet, notes, dates, client_key)
-                VALUES
-                    (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (client_key) WHERE client_key IS NOT NULL
-                DO UPDATE SET
-                    name = EXCLUDED.name,
-                    phone = EXCLUDED.phone,
-                    adults = EXCLUDED.adults,
-                    children = EXCLUDED.children,
-                    child_ages = EXCLUDED.child_ages,
-                    diet = EXCLUDED.diet,
-                    notes = EXCLUDED.notes,
-                    dates = EXCLUDED.dates
-                RETURNING id, name, dates, created_at
+                SELECT id
+                FROM camp_registrations
+                WHERE is_visible = TRUE
+                  AND regexp_replace(phone, '\\D', '', 'g') = %s
+                ORDER BY created_at DESC
+                LIMIT 1
                 """,
-                (name, phone, adults, children, child_ages, diet, notes, dates, client_key),
+                (phone_key,),
             )
+            existing = cur.fetchone()
+
+            if existing:
+                cur.execute(
+                    """
+                    UPDATE camp_registrations
+                    SET name = %s,
+                        phone = %s,
+                        adults = %s,
+                        children = %s,
+                        child_ages = %s,
+                        diet = %s,
+                        notes = %s,
+                        dates = %s,
+                        client_key = COALESCE(client_key, %s)
+                    WHERE id = %s
+                    RETURNING id, name, dates, created_at
+                    """,
+                    (
+                        name,
+                        phone,
+                        adults,
+                        children,
+                        child_ages,
+                        diet,
+                        notes,
+                        dates,
+                        client_key,
+                        existing["id"],
+                    ),
+                )
+            else:
+                cur.execute(
+                    """
+                    INSERT INTO camp_registrations
+                        (name, phone, adults, children, child_ages, diet, notes, dates, client_key)
+                    VALUES
+                        (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (client_key) WHERE client_key IS NOT NULL
+                    DO UPDATE SET
+                        name = EXCLUDED.name,
+                        phone = EXCLUDED.phone,
+                        adults = EXCLUDED.adults,
+                        children = EXCLUDED.children,
+                        child_ages = EXCLUDED.child_ages,
+                        diet = EXCLUDED.diet,
+                        notes = EXCLUDED.notes,
+                        dates = EXCLUDED.dates
+                    RETURNING id, name, dates, created_at
+                    """,
+                    (name, phone, adults, children, child_ages, diet, notes, dates, client_key),
+                )
+
             registration = serialize_registration_public(cur.fetchone())
 
     return jsonify({"registration": registration}), 201
