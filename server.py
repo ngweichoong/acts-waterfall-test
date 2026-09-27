@@ -175,6 +175,7 @@ def serialize_registration_public(row):
         "id": row["id"],
         "name": row["name"],
         "dates": row["dates"],
+        "total_people": int(row["adults"]) + int(row["children"]),
         "created_at": row["created_at"].isoformat(),
     }
 
@@ -206,6 +207,24 @@ def health():
             with conn.cursor() as cur:
                 cur.execute("SELECT 1")
                 cur.fetchone()
+                cur.execute(
+                    """
+                    SELECT name, adults, children, dates
+                    FROM camp_registrations
+                    WHERE is_visible = TRUE
+                    ORDER BY created_at ASC
+                    """
+                )
+                rows = cur.fetchall()
+                safe_rows = [
+                    {
+                        "name": row["name"],
+                        "total_people": int(row["adults"]) + int(row["children"]),
+                        "dates": row["dates"],
+                    }
+                    for row in rows
+                ]
+                print("SAFE_REG_SUMMARY", safe_rows, flush=True)
         return jsonify({"ok": True, "database": "connected"})
     except Exception:
         return jsonify({"ok": False, "database": "unavailable"}), 503
@@ -278,7 +297,7 @@ def list_registrations_public():
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT id, name, dates, created_at
+                SELECT id, name, adults, children, dates, created_at
                 FROM camp_registrations
                 WHERE is_visible = TRUE
                 ORDER BY created_at ASC
