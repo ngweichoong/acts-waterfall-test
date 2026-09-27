@@ -237,7 +237,7 @@
           <div class="sec-no">04</div>
           <div>
             <h2>告訴我們誰會一起參加</h2>
-            <p>聯絡資料不會公開；公開的日期統計只顯示報名代表名稱與可參加日期。</p>
+            <p>聯絡資料不會公開；公開的日期統計只顯示報名代表名稱、預計參加人數與可參加日期。</p>
           </div>
         </div>
 
@@ -343,10 +343,11 @@
           <div class="sec-no">07</div>
           <div>
             <h2>大家目前什么时候有空？</h2>
-            <p>这里只公开报名代表名称与可参加日期，不显示电话、儿童资料或其他个人备注。</p>
+            <p>这里只公开报名代表名称、预计参加总人数与可参加日期，不显示电话、儿童年龄、饮食或其他个人备注。</p>
           </div>
         </div>
 
+        <div id="availabilitySummary" class="people-summary" style="margin:0 0 14px;display:none"></div>
         <div id="availabilityTableWrap"></div>
         <div id="availabilityCards" class="availability-cards"></div>
 
@@ -358,7 +359,7 @@
         </div>
 
         <div class="test-note">
-          報名資料會儲存在共享的 Railway 資料庫。任何手機或電腦重新打開這個頁面，都會看到最新的公開日期統計；聯絡電話、兒童資料、飲食與備註不會公開。
+          報名資料會儲存在共享的 Railway 資料庫。任何手機或電腦重新打開這個頁面，都會看到最新的家庭名稱、預計參加人數與日期統計；聯絡電話、兒童年齡、飲食與備註不會公開。
         </div>
       </section>
 
@@ -510,6 +511,7 @@
       const renderAvailability = async () => {
         const wrap = document.getElementById('availabilityTableWrap');
         const cards = document.getElementById('availabilityCards');
+        const summary = document.getElementById('availabilitySummary');
         wrap.innerHTML = '<div class="availability-empty">正在讀取最新報名資料…</div>';
         cards.innerHTML = '';
 
@@ -517,16 +519,21 @@
           const rows = await fetchRegistrations();
 
           if (!rows.length) {
+            summary.style.display = 'none';
             wrap.innerHTML = '<div class="availability-empty">目前還沒有家庭提交報名。</div>';
           } else {
+            const totalPeople = rows.reduce((sum,r) => sum + Number(r.total_people || 0), 0);
+            summary.style.display = 'block';
+            summary.innerHTML = '目前已登记：<strong>' + rows.length + ' 个家庭 · 预计 ' + totalPeople + ' 人</strong>';
+
             const head = Object.keys(DATE_LABELS).map(d => '<th class="center">' + DATE_LABELS[d] + '</th>').join('');
             const body = rows.map(r => {
               const dates = Array.isArray(r.dates) ? r.dates : [];
               const cells = Object.keys(DATE_LABELS).map(d => '<td class="center">' + (dates.includes(d) ? '✓' : '—') + '</td>').join('');
-              return '<tr><td><strong>' + escapeHtml(r.name) + '</strong></td>' + cells + '</tr>';
+              return '<tr><td><strong>' + escapeHtml(r.name) + '</strong></td><td class="center">' + Number(r.total_people || 0) + ' 人</td>' + cells + '</tr>';
             }).join('');
             wrap.innerHTML =
-              '<div class="availability-wrap"><table class="availability-table"><thead><tr><th>家庭 / 報名代表</th>' +
+              '<div class="availability-wrap"><table class="availability-table"><thead><tr><th>家庭 / 報名代表</th><th class="center">人数</th>' +
               head + '</tr></thead><tbody>' + body + '</tbody></table></div>';
           }
 
@@ -537,6 +544,7 @@
               (names ? '<span>' + escapeHtml(names) + '</span>' : '') + '</div>';
           }).join('');
         } catch (error) {
+          summary.style.display = 'none';
           wrap.innerHTML = '<div class="availability-empty">暫時無法連接共享報名資料，請稍後重新整理頁面。</div>';
           cards.innerHTML = '';
         }
