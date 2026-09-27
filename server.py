@@ -190,36 +190,6 @@ def admin_authorized():
     return bool(supplied) and hmac.compare_digest(supplied, ADMIN_TOKEN)
 
 
-def log_safe_registration_summary_once():
-    try:
-        ensure_schema()
-        with get_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    """
-                    SELECT name, adults, children, dates
-                    FROM camp_registrations
-                    WHERE is_visible = TRUE
-                    ORDER BY created_at ASC
-                    """
-                )
-                rows = cur.fetchall()
-                safe_rows = [
-                    {
-                        "name": row["name"],
-                        "total_people": int(row["adults"]) + int(row["children"]),
-                        "dates": row["dates"],
-                    }
-                    for row in rows
-                ]
-                print("SAFE_REG_STARTUP_SUMMARY", safe_rows, flush=True)
-    except Exception as exc:
-        print("SAFE_REG_STARTUP_SUMMARY_ERROR", type(exc).__name__, flush=True)
-
-
-log_safe_registration_summary_once()
-
-
 @app.after_request
 def security_headers(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -237,24 +207,6 @@ def health():
             with conn.cursor() as cur:
                 cur.execute("SELECT 1")
                 cur.fetchone()
-                cur.execute(
-                    """
-                    SELECT name, adults, children, dates
-                    FROM camp_registrations
-                    WHERE is_visible = TRUE
-                    ORDER BY created_at ASC
-                    """
-                )
-                rows = cur.fetchall()
-                safe_rows = [
-                    {
-                        "name": row["name"],
-                        "total_people": int(row["adults"]) + int(row["children"]),
-                        "dates": row["dates"],
-                    }
-                    for row in rows
-                ]
-                print("SAFE_REG_SUMMARY", safe_rows, flush=True)
         return jsonify({"ok": True, "database": "connected"})
     except Exception:
         return jsonify({"ok": False, "database": "unavailable"}), 503
