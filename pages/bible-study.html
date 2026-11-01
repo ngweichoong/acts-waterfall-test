@@ -87,35 +87,35 @@
     .isaiah-card{
       position:relative;
       overflow:hidden;
-      isolation:isolate;
       padding:20px;
       border-radius:16px;
-      background:#fbfcf8;
       border:1px solid #e5ebe4;
       min-height:220px;
-    }
-    .isaiah-card::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      z-index:0;
+      background-color:#fbfcf8;
       background-size:cover;
       background-position:center;
-      transform:scale(1.02);
+      background-repeat:no-repeat;
     }
-    .isaiah-card::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      z-index:1;
-      background:linear-gradient(90deg,rgba(251,252,248,.84) 0%,rgba(251,252,248,.72) 56%,rgba(251,252,248,.52) 100%);
-      pointer-events:none;
+    .isaiah-card.card-history{
+      background-image:
+        linear-gradient(90deg,rgba(251,252,248,.76) 0%,rgba(251,252,248,.58) 58%,rgba(251,252,248,.36) 100%),
+        url("https://commons.wikimedia.org/wiki/Special:Redirect/file/120.The_Prophet_Isaiah.jpg?width=1200");
     }
-    .isaiah-card.card-history::before{background-image:url("https://commons.wikimedia.org/wiki/Special:Redirect/file/120.The_Prophet_Isaiah.jpg?width=1200")}
-    .isaiah-card.card-scroll::before{background-image:url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Great_Isaiah_Scroll.jpg?width=1400")}
-    .isaiah-card.card-museum::before{background-image:url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Shrine_of_the_Book%2C_Jerusalem.jpg?width=1200")}
-    .isaiah-card.card-redemption::before{background-image:url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Cross_in_sunset.jpg?width=1200")}
-    .isaiah-card > *{position:relative;z-index:2}
+    .isaiah-card.card-scroll{
+      background-image:
+        linear-gradient(90deg,rgba(251,252,248,.78) 0%,rgba(251,252,248,.60) 58%,rgba(251,252,248,.38) 100%),
+        url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Great_Isaiah_Scroll.jpg?width=1400");
+    }
+    .isaiah-card.card-museum{
+      background-image:
+        linear-gradient(90deg,rgba(251,252,248,.76) 0%,rgba(251,252,248,.58) 58%,rgba(251,252,248,.36) 100%),
+        url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Shrine_of_the_Book%2C_Jerusalem.jpg?width=1200");
+    }
+    .isaiah-card.card-redemption{
+      background-image:
+        linear-gradient(90deg,rgba(251,252,248,.76) 0%,rgba(251,252,248,.56) 58%,rgba(251,252,248,.34) 100%),
+        url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Cross_in_sunset.jpg?width=1200");
+    }
     .isaiah-kicker{display:block;margin-bottom:7px;font-size:12px;font-weight:900;letter-spacing:.06em;color:#d86f3d}
     .isaiah-card h3{margin:0 0 8px;color:var(--green);font-size:17px}
     .isaiah-card p{margin:0;color:#657676;font-size:13px;line-height:1.8}
