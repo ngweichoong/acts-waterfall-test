@@ -429,26 +429,6 @@ def create_registration():
     return jsonify({"registration": registration}), 201
 
 
-@app.route("/api/admin/registrations/reset", methods=["GET", "POST"])
-def reset_registrations():
-    supplied = request.args.get("token", "")
-    if not ADMIN_TOKEN or not supplied or not hmac.compare_digest(supplied, ADMIN_TOKEN):
-        return jsonify({"error": "unauthorized"}), 401
-
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute("DELETE FROM camp_registrations")
-            deleted = cur.rowcount
-        conn.commit()
-
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT COUNT(*) AS count FROM camp_registrations")
-            remaining = cur.fetchone()["count"]
-
-    return jsonify({"ok": True, "deleted": deleted, "remaining": remaining})
-
-
 @app.delete("/api/comments/<int:comment_id>")
 def delete_comment(comment_id: int):
     if not ADMIN_TOKEN:
