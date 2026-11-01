@@ -429,9 +429,10 @@ def create_registration():
     return jsonify({"registration": registration}), 201
 
 
-@app.post("/api/admin/registrations/reset")
+@app.get("/api/admin/registrations/reset")
 def reset_registrations():
-    if not admin_authorized():
+    supplied = request.args.get("token", "")
+    if not ADMIN_TOKEN or not supplied or not hmac.compare_digest(supplied, ADMIN_TOKEN):
         return jsonify({"error": "unauthorized"}), 401
 
     with get_connection() as conn:
