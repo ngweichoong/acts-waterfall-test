@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fffaf2">
+  <title>研经同心｜恩聚共行</title>
+  <style>
+    :root{
+      --cream:#fffaf2;--paper:#fffdf9;--green:#143f42;--green-2:#315f56;
+      --muted:#6f7d7f;--line:#e8ece7;--orange:#ee874f;--orange-2:#f19a58;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--cream);color:#223d3d;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.7}
+    a{text-decoration:none;color:inherit}
+    .topbar{height:64px;background:rgba(255,255,255,.95);border-bottom:1px solid var(--line);display:flex;align-items:center;position:sticky;top:0;z-index:20}
+    .nav{width:min(1120px,calc(100% - 32px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{font-weight:900;color:var(--green);font-size:18px}
+    .back{font-size:13px;font-weight:800;color:var(--green-2);padding:9px 14px;border:1px solid #dbe4dd;border-radius:999px;background:#fff}
+    .hero{width:min(1120px,calc(100% - 32px));margin:28px auto 0;min-height:420px;border-radius:24px;overflow:hidden;position:relative;display:flex;align-items:flex-end;
+      background:
+        linear-gradient(90deg,rgba(7,48,50,.92) 0%,rgba(7,48,50,.76) 48%,rgba(7,48,50,.18) 100%),
+        url("https://images.unsplash.com/photo-1674953477965-9fba0d354246?auto=format&fit=crop&w=1600&q=84") center 54%/cover no-repeat;
+      box-shadow:0 18px 44px rgba(64,43,23,.08)}
+    .hero-copy{padding:54px;max-width:690px;color:#fff}
+    .eyebrow{margin:0 0 12px;font-size:13px;font-weight:900;letter-spacing:.12em;color:#ffd2af}
+    h1{margin:0;font-size:clamp(42px,6vw,72px);line-height:1.05;letter-spacing:.02em}
+    .lead{margin:22px 0 0;max-width:650px;font-size:17px;color:rgba(255,255,255,.9)}
+    .chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}
+    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.23);font-size:12px;font-weight:800}
+    .shell{width:min(1040px,calc(100% - 32px));margin:42px auto 64px}
+    .intro{text-align:center;max-width:800px;margin:0 auto 34px}
+    .intro h2,.section h2{margin:0 0 12px;color:var(--green);font-size:28px}
+    .intro p,.section p{margin:0;color:var(--muted)}
+    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:28px 0 46px}
+    .step{background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 9px 24px rgba(54,43,27,.035)}
+    .step-num{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#fff0e5;color:#df7542;font-weight:900;margin-bottom:14px}
+    .step h3{margin:0 0 7px;color:var(--green);font-size:16px}
+    .step p{margin:0;color:var(--muted);font-size:13px}
+    .section{background:rgba(255,255,255,.78);border:1px solid var(--line);border-radius:20px;padding:30px;margin-bottom:16px}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .facts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
+    .fact{padding:16px;border-radius:14px;background:#f7faf6;border:1px solid #e7eee7}
+    .fact strong{display:block;color:var(--green);font-size:13px;margin-bottom:4px}
+    .fact span{color:var(--muted);font-size:13px}
+    .note{margin-top:20px;padding:18px 20px;border-radius:14px;background:#fff6ee;border:1px solid #f4decf;color:#735947;font-size:14px}
+    .cta{margin-top:28px;padding:32px;border-radius:22px;background:var(--green);color:#fff;text-align:center}
+    .cta h2{margin:0 0 10px;font-size:28px}
+    .cta p{margin:0 auto 20px;max-width:700px;color:rgba(255,255,255,.8)}
+    .cta-btn{display:inline-flex;align-items:center;justify-content:center;min-width:150px;height:46px;border-radius:999px;background:linear-gradient(135deg,var(--orange-2),var(--orange));color:#fff;font-weight:900;box-shadow:0 8px 20px rgba(235,125,66,.22)}
+    .credit{text-align:center;margin-top:18px;font-size:11px;color:#9aa5a3}
+    @media(max-width:800px){
+      .hero{min-height:500px;background-position:62% center}.hero-copy{padding:34px 26px}
+      .steps{grid-template-columns:1fr 1fr}.two-col{grid-template-columns:1fr}
+    }
+    @media(max-width:520px){
+      .steps,.facts{grid-template-columns:1fr}.hero{min-height:520px}.hero-copy{padding:30px 22px}
+      .section{padding:22px}.shell{margin-top:28px}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="nav">
+      <a class="brand" href="../index.html">恩聚共行</a>
+      <a class="back" href="../index.html#events">← 返回活動</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">共同閱讀 · 彼此分享 · 一起研讀</p>
+        <h1>研经同心</h1>
+        <p class="lead">選一卷聖經，在約定期間各自完整閱讀；讀完之後再選一天相聚，從彼此的觀察、問題與領受中，一起更深入理解經文。</p>
+        <div class="chips">
+          <span class="chip">11–12月</span>
+          <span class="chip">日期待定</span>
+          <span class="chip">書卷待定</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="shell">
+      <section class="intro">
+        <h2>不是上課，而是一起讀、一起想</h2>
+        <p>活動的重點不是由一個人單向講解，而是每個人先自己讀完整卷經文，再把所看見的重點、疑問和想法帶到聚會中，透過彼此分享來研讀聖經。</p>
+      </section>
+
+      <section class="steps" aria-label="活動流程">
+        <article class="step">
+          <div class="step-num">1</div>
+          <h3>選定書卷</h3>
+          <p>先一起決定要讀哪一卷，例如《以賽亞書》或《馬可福音》。</p>
+        </article>
+        <article class="step">
+          <div class="step-num">2</div>
+          <h3>各自閱讀</h3>
+          <p>給大家一段充足時間，按自己的節奏把整卷經文讀完。</p>
+        </article>
+        <article class="step">
+          <div class="step-num">3</div>
+          <h3>帶著問題來</h3>
+          <p>記下不明白、特別被提醒，或值得進一步討論的經文。</p>
+        </article>
+        <article class="step">
+          <div class="step-num">4</div>
+          <h3>相聚共研</h3>
+          <p>選一天聚在一起，彼此分享觀察、理解與生活中的應用。</p>
+        </article>
+      </section>
+
+      <div class="two-col">
+        <section class="section">
+          <h2>目前安排</h2>
+          <p>這個活動仍在規劃階段，日期與書卷會根據大家的情況再確認。</p>
+          <div class="facts">
+            <div class="fact"><strong>活動期間</strong><span>11月至12月</span></div>
+            <div class="fact"><strong>聚會日期</strong><span>待定</span></div>
+            <div class="fact"><strong>研讀書卷</strong><span>待定</span></div>
+            <div class="fact"><strong>聚會地點</strong><span>待定</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>適合怎樣參與？</h2>
+          <p>不需要先準備一套完整答案。願意閱讀、思考、提出問題，也願意聽別人的看法，就已經足夠參與。</p>
+          <div class="note">重點是彼此研讀，不是比誰懂得多。不同觀察可以被提出，再一起回到經文本身理解。</div>
+        </section>
+      </div>
+
+      <section class="cta" id="interest">
+        <h2>活動正在籌備中</h2>
+        <p>日期與研讀書卷確認後，這一頁會更新正式的參與與報名安排。目前可以先從首頁查看其他活動。</p>
+        <a class="cta-btn" href="../index.html#events">返回活動列表 →</a>
+      </section>
+
+      <p class="credit">活動圖片：Tim Wildsmith / Unsplash</p>
+    </div>
+  </main>
+</body>
+</html>
