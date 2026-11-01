@@ -326,7 +326,8 @@ button { font: inherit; }
   margin-top: 14px;
 }
 .event-image.bible-study-image {
-  background-image: url("assets/bible-study-banner.jpg");
+  background-image: none;
+  background-color: #f3efe7;
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
