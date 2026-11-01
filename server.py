@@ -542,7 +542,7 @@ def save_bible_study_availability():
                         dates = %s,
                         updated_at = NOW()
                     WHERE id = %s
-                    RETURNING id, name, adults, children, dates, created_at, updated_at
+                    RETURNING id, name, dates, created_at, updated_at
                     """,
                     (name, dates, existing["id"]),
                 )
@@ -551,7 +551,7 @@ def save_bible_study_availability():
                     """
                     INSERT INTO bible_study_availability (name, dates)
                     VALUES (%s, %s)
-                    RETURNING id, name, adults, children, dates, created_at, updated_at
+                    RETURNING id, name, dates, created_at, updated_at
                     """,
                     (name, dates),
                 )
