@@ -84,7 +84,37 @@
     .isaiah-intro{margin-bottom:18px}
     .isaiah-lead{font-size:15px;line-height:1.9;color:#536767;margin-top:8px}
     .isaiah-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:22px}
-    .isaiah-card{padding:20px;border-radius:16px;background:#fbfcf8;border:1px solid #e5ebe4}
+    .isaiah-card{
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      padding:20px;
+      border-radius:16px;
+      background:#fbfcf8;
+      border:1px solid #e5ebe4;
+      min-height:220px;
+    }
+    .isaiah-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-2;
+      background-size:cover;
+      background-position:center;
+      transform:scale(1.02);
+    }
+    .isaiah-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-1;
+      background:linear-gradient(90deg,rgba(251,252,248,.94) 0%,rgba(251,252,248,.84) 58%,rgba(251,252,248,.68) 100%);
+    }
+    .isaiah-card.card-history::before{background-image:url("../assets/isaiah-cards/isaiah-card-1.webp")}
+    .isaiah-card.card-scroll::before{background-image:url("../assets/isaiah-cards/isaiah-card-2.webp")}
+    .isaiah-card.card-museum::before{background-image:url("../assets/isaiah-cards/isaiah-card-3.webp")}
+    .isaiah-card.card-redemption::before{background-image:url("../assets/isaiah-cards/isaiah-card-4.webp")}
+    .isaiah-card > *{position:relative;z-index:1}
     .isaiah-kicker{display:block;margin-bottom:7px;font-size:12px;font-weight:900;letter-spacing:.06em;color:#d86f3d}
     .isaiah-card h3{margin:0 0 8px;color:var(--green);font-size:17px}
     .isaiah-card p{margin:0;color:#657676;font-size:13px;line-height:1.8}
@@ -172,25 +202,25 @@
         <p class="isaiah-lead">《以賽亞書》不只是舊約中篇幅很大的先知書，也是一卷在基督信仰裡非常重要的經卷。它把審判、盼望、彌賽亞與救贖放在同一幅大圖景裡，很適合大家先各自閱讀，再把問題與觀察帶到一起討論。</p>
 
         <div class="isaiah-grid">
-          <article class="isaiah-card">
+          <article class="isaiah-card card-history">
             <span class="isaiah-kicker">01｜歷史背景</span>
             <h3>比耶穌早約七百年</h3>
             <p>先知以賽亞活躍於公元前 8 世紀。也就是說，《以賽亞書》的核心先知傳統早於耶穌數百年，而不是在耶穌之後才寫成。</p>
           </article>
 
-          <article class="isaiah-card">
+          <article class="isaiah-card card-scroll">
             <span class="isaiah-kicker">02｜真實古卷</span>
             <h3>死海古卷中的《大以賽亞書卷》</h3>
             <p>1947 年，昆蘭附近洞穴發現第一批死海古卷。其中《大以賽亞書卷》約抄寫於公元前 125 年，保存了《以賽亞書》全部 66 章，證明完整文本在耶穌出生之前已經存在。</p>
           </article>
 
-          <article class="isaiah-card">
+          <article class="isaiah-card card-museum">
             <span class="isaiah-kicker">03｜今天仍可看見</span>
             <h3>收藏於耶路撒冷以色列博物館</h3>
             <p>《大以賽亞書卷》由以色列博物館收藏，與死海古卷一同保存在「聖書之龕」（Shrine of the Book）。它是一件可以被研究、保存與展示的真實歷史文物。</p>
           </article>
 
-          <article class="isaiah-card">
+          <article class="isaiah-card card-redemption">
             <span class="isaiah-kicker">04｜基督信仰中的重要性</span>
             <h3>從彌賽亞到受苦與救贖</h3>
             <p>基督徒歷來特別重視以賽亞書 7、9、52–53 章，並從中看見與耶穌降生、彌賽亞身份、受苦與救贖相關的預告與圖像。這也是我們這次研讀最值得一起討論的部分之一。</p>
