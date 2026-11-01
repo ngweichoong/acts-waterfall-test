@@ -326,10 +326,8 @@ button { font: inherit; }
   margin-top: 14px;
 }
 .event-image.bible-study-image {
-  background-image:
-    linear-gradient(rgba(5,61,69,.05), rgba(5,61,69,.05)),
-    url("https://images.unsplash.com/photo-1674953477965-9fba0d354246?auto=format&fit=crop&w=1200&q=82");
-  background-position: center 54%;
+  background-image: url("assets/bible-study-banner.jpg");
+  background-position: center center;
 }
 .event-date {
   text-align: center;
