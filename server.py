@@ -37,6 +37,12 @@ ALLOWED_CAMP_DATES = {
     "2026-11-28",
     "2026-12-05",
 }
+ALLOWED_BIBLE_DATES = {
+    "2026-11-15",
+    "2026-11-22",
+    "2026-11-29",
+    "2026-12-06",
+}
 
 app = Flask(__name__, static_folder=None)
 CORS(
@@ -125,6 +131,31 @@ def ensure_schema():
                             CREATE UNIQUE INDEX IF NOT EXISTS camp_registrations_client_key_uidx
                             ON camp_registrations (client_key)
                             WHERE client_key IS NOT NULL
+                            """
+                        )
+                        cur.execute(
+                            """
+                            CREATE TABLE IF NOT EXISTS bible_study_availability (
+                                id BIGSERIAL PRIMARY KEY,
+                                name VARCHAR(80) NOT NULL,
+                                dates TEXT[] NOT NULL,
+                                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                                is_visible BOOLEAN NOT NULL DEFAULT TRUE
+                            )
+                            """
+                        )
+                        cur.execute(
+                            """
+                            CREATE INDEX IF NOT EXISTS bible_study_availability_created_at_idx
+                            ON bible_study_availability (created_at ASC)
+                            """
+                        )
+                        cur.execute(
+                            """
+                            CREATE UNIQUE INDEX IF NOT EXISTS bible_study_availability_name_uidx
+                            ON bible_study_availability ((LOWER(name)))
+                            WHERE is_visible = TRUE
                             """
                         )
                 _schema_ready = True
@@ -427,6 +458,114 @@ def create_registration():
             registration = serialize_registration_public(cur.fetchone())
 
     return jsonify({"registration": registration}), 201
+
+
+
+@app.get("/api/bible-study/availability")
+def list_bible_study_availability():
+    ensure_schema()
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, name, dates, created_at, updated_at
+                FROM bible_study_availability
+                WHERE is_visible = TRUE
+                ORDER BY created_at ASC
+                LIMIT 200
+                """
+            )
+            rows = cur.fetchall()
+
+    selections = [
+        {
+            "id": row["id"],
+            "name": row["name"],
+            "dates": row["dates"],
+            "created_at": row["created_at"].isoformat(),
+            "updated_at": row["updated_at"].isoformat(),
+        }
+        for row in rows
+    ]
+    return jsonify({"selections": selections})
+
+
+@app.post("/api/bible-study/availability")
+def save_bible_study_availability():
+    if not request.is_json:
+        return jsonify({"error": "請使用正確的日期選擇格式。"}), 415
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify({"error": "日期選擇格式不正確。"}), 400
+
+    name = payload.get("name")
+    dates = payload.get("dates")
+
+    if not isinstance(name, str):
+        return jsonify({"error": "請填寫姓名。"}), 400
+    if not isinstance(dates, list) or not dates:
+        return jsonify({"error": "請至少選擇一個可以參加的星期日。"}), 400
+
+    name = name.strip()
+    dates = sorted(set(str(d).strip() for d in dates))
+
+    if not name:
+        return jsonify({"error": "請填寫姓名。"}), 400
+    if len(name) > MAX_NAME_LENGTH:
+        return jsonify({"error": f"姓名最多 {MAX_NAME_LENGTH} 個字元。"}), 400
+    if any(d not in ALLOWED_BIBLE_DATES for d in dates):
+        return jsonify({"error": "包含不在本次研經活動範圍內的日期。"}), 400
+    if rate_limited("bible-study:" + client_ip()):
+        return jsonify({"error": "提交太頻繁，請稍等一下再試。"}), 429
+
+    ensure_schema()
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id
+                FROM bible_study_availability
+                WHERE is_visible = TRUE
+                  AND LOWER(name) = LOWER(%s)
+                LIMIT 1
+                """,
+                (name,),
+            )
+            existing = cur.fetchone()
+
+            if existing:
+                cur.execute(
+                    """
+                    UPDATE bible_study_availability
+                    SET name = %s,
+                        dates = %s,
+                        updated_at = NOW()
+                    WHERE id = %s
+                    RETURNING id, name, dates, created_at, updated_at
+                    """,
+                    (name, dates, existing["id"]),
+                )
+            else:
+                cur.execute(
+                    """
+                    INSERT INTO bible_study_availability (name, dates)
+                    VALUES (%s, %s)
+                    RETURNING id, name, dates, created_at, updated_at
+                    """,
+                    (name, dates),
+                )
+            row = cur.fetchone()
+
+    return jsonify({
+        "selection": {
+            "id": row["id"],
+            "name": row["name"],
+            "dates": row["dates"],
+            "created_at": row["created_at"].isoformat(),
+            "updated_at": row["updated_at"].isoformat(),
+        }
+    }), 201
 
 
 @app.delete("/api/comments/<int:comment_id>")
