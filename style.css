@@ -322,6 +322,15 @@ button { font: inherit; }
   min-height: 99px;
   background: url("assets/event-rawang-v2.jpg") center center / cover no-repeat;
 }
+.event-card + .event-card {
+  margin-top: 14px;
+}
+.event-image.bible-study-image {
+  background-image:
+    linear-gradient(rgba(5,61,69,.05), rgba(5,61,69,.05)),
+    url("https://images.unsplash.com/photo-1674953477965-9fba0d354246?auto=format&fit=crop&w=1200&q=82");
+  background-position: center 54%;
+}
 .event-date {
   text-align: center;
   color: #df7542;
