@@ -173,7 +173,7 @@
     <section class="reg-hero">
       <div class="reg-kicker">CHAPTER 4 · REGISTRATION</div>
       <h1>我有興趣 · 我要報名</h1>
-      <p>先告訴我們你的家庭人數與十月份可以參加的星期六。最後日期會以最多家庭能參加的日期為優先，再確認場地與設備。</p>
+      <p>先告訴我們你的家庭人數，以及11月中旬至12月初可以參加的星期六。最後日期會以最多家庭能參加的日期為優先，再確認場地與設備。</p>
     </section>
 
     <section class="reg-section" id="first-time">
@@ -221,7 +221,7 @@
       <div class="haze-box">
         <div class="ico">🌫️</div>
         <div>
-          <h3>如果十月份出現嚴重煙霾，活動將取消</h3>
+          <h3>如果活動期間出現嚴重煙霾，活動將取消</h3>
           <p>
             我們會在活動前留意官方空氣品質資料與實際環境情況。
             如果煙霾嚴重、空氣品質不適合戶外活動，這次露營計劃將取消。
@@ -302,36 +302,32 @@
         <div class="sec-head">
           <div class="sec-no">06</div>
           <div>
-            <h2>请选择十月份你可以参加的星期六</h2>
-            <p>可以选择一个或多个日期；如果整个十月的星期六都可以，也可以全部勾选。</p>
+            <h2>请选择11月中旬至12月初你可以参加的星期六</h2>
+            <p>可以选择一个或多个日期；只要当天方便参加，就可以勾选，也可以全部选择。</p>
           </div>
         </div>
 
         <div class="dates-grid">
           <label class="date-option">
-            <input type="checkbox" name="dates" value="2026-10-03">
-            <strong>10月3日</strong><span>星期六</span>
+            <input type="checkbox" name="dates" value="2026-11-14">
+            <strong>11月14日</strong><span>星期六</span>
           </label>
           <label class="date-option">
-            <input type="checkbox" name="dates" value="2026-10-10">
-            <strong>10月10日</strong><span>星期六</span>
+            <input type="checkbox" name="dates" value="2026-11-21">
+            <strong>11月21日</strong><span>星期六</span>
           </label>
           <label class="date-option">
-            <input type="checkbox" name="dates" value="2026-10-17">
-            <strong>10月17日</strong><span>星期六</span>
+            <input type="checkbox" name="dates" value="2026-11-28">
+            <strong>11月28日</strong><span>星期六</span>
           </label>
           <label class="date-option">
-            <input type="checkbox" name="dates" value="2026-10-24">
-            <strong>10月24日</strong><span>星期六</span>
-          </label>
-          <label class="date-option">
-            <input type="checkbox" name="dates" value="2026-10-31">
-            <strong>10月31日</strong><span>星期六</span>
+            <input type="checkbox" name="dates" value="2026-12-05">
+            <strong>12月5日</strong><span>星期六</span>
           </label>
         </div>
 
         <div class="date-note">
-          请勾选<strong>所有</strong>你能够参加的日期。最后会以最多家庭能够参加的星期六为优先，
+          请勾选<strong>所有</strong>你能够参加的日期。本轮日期从11月中旬开始，到12月第一个星期六为止。最后会以最多家庭能够参加的星期六为优先，
           再确认 Camp Bakau 场地与 EasyCamp 设备 availability。
         </div>
 
@@ -402,7 +398,7 @@
           </label>
           <label class="consent-row">
             <input id="consentDate" type="checkbox" required>
-            <span>我了解最终活动日期会根据整体报名结果、场地与设备 availability 决定；如十月份出现严重烟霾或空气品质不适合户外活动，露营计划将取消。</span>
+            <span>我了解最终活动日期会根据整体报名结果、场地与设备 availability 决定；如活动期间出现严重烟霾或空气品质不适合户外活动，露营计划将取消。</span>
           </label>
         </div>
 
@@ -417,13 +413,11 @@
   <script>
     (() => {
       const API_BASE = 'https://acts-waterfall-test-api-production.up.railway.app';
-      const LEGACY_STORAGE_KEY = 'actsCampRegistrationsV1';
       const DATE_LABELS = {
-        '2026-10-03':'10月3日',
-        '2026-10-10':'10月10日',
-        '2026-10-17':'10月17日',
-        '2026-10-24':'10月24日',
-        '2026-10-31':'10月31日'
+        '2026-11-14':'11月14日',
+        '2026-11-21':'11月21日',
+        '2026-11-28':'11月28日',
+        '2026-12-05':'12月5日'
       };
 
       const form = document.getElementById('registrationForm');
@@ -465,40 +459,6 @@
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error || '提交失敗，請稍後再試。');
         return data.registration;
-      };
-
-      const migrateLegacyRegistrations = async () => {
-        let legacy = [];
-        try {
-          const raw = localStorage.getItem(LEGACY_STORAGE_KEY);
-          legacy = raw ? JSON.parse(raw) : [];
-          if (!Array.isArray(legacy) || !legacy.length) return;
-        } catch {
-          return;
-        }
-
-        let allSucceeded = true;
-        for (const row of legacy) {
-          try {
-            await submitRegistration({
-              name:String(row.name || '').trim(),
-              phone:String(row.phone || '').trim(),
-              adults:Number(row.adults || 1),
-              children:Number(row.children || 0),
-              childAges:String(row.childAges || '').trim(),
-              diet:String(row.diet || '').trim(),
-              notes:String(row.notes || '').trim(),
-              dates:Array.isArray(row.dates) ? row.dates : [],
-              clientKey:'legacy-' + String(row.id || row.name || Date.now())
-            });
-          } catch {
-            allSucceeded = false;
-          }
-        }
-
-        if (allSucceeded) {
-          localStorage.removeItem(LEGACY_STORAGE_KEY);
-        }
       };
 
       const fetchRegistrations = async () => {
@@ -558,7 +518,7 @@
         e.preventDefault();
         const dates = selectedDates();
         if (!dates.length) {
-          alert('請至少選擇一個十月份可以參加的星期六。');
+          alert('請至少選擇一個11月中旬至12月初可以參加的星期六。');
           return;
         }
 
@@ -594,7 +554,7 @@
 
       updatePeople();
       updatePreview();
-      migrateLegacyRegistrations().finally(renderAvailability);
+      renderAvailability();
     })();
   </script>
 </body>
