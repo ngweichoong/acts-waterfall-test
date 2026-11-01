@@ -429,7 +429,7 @@ def create_registration():
     return jsonify({"registration": registration}), 201
 
 
-@app.get("/api/admin/registrations/reset")
+@app.route("/api/admin/registrations/reset", methods=["GET", "POST"])
 def reset_registrations():
     supplied = request.args.get("token", "")
     if not ADMIN_TOKEN or not supplied or not hmac.compare_digest(supplied, ADMIN_TOKEN):
