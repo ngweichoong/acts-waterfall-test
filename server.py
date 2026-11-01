@@ -32,11 +32,10 @@ MAX_DIET_LENGTH = 300
 MAX_NOTES_LENGTH = 800
 RATE_LIMIT_SECONDS = 20
 ALLOWED_CAMP_DATES = {
-    "2026-10-03",
-    "2026-10-10",
-    "2026-10-17",
-    "2026-10-24",
-    "2026-10-31",
+    "2026-11-14",
+    "2026-11-21",
+    "2026-11-28",
+    "2026-12-05",
 }
 
 app = Flask(__name__, static_folder=None)
