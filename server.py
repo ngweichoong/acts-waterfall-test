@@ -418,7 +418,7 @@ def create_registration():
                         dates = %s,
                         client_key = COALESCE(client_key, %s)
                     WHERE id = %s
-                    RETURNING id, name, dates, created_at
+                    RETURNING id, name, adults, children, dates, created_at
                     """,
                     (
                         name,
@@ -450,7 +450,7 @@ def create_registration():
                         diet = EXCLUDED.diet,
                         notes = EXCLUDED.notes,
                         dates = EXCLUDED.dates
-                    RETURNING id, name, dates, created_at
+                    RETURNING id, name, adults, children, dates, created_at
                     """,
                     (name, phone, adults, children, child_ages, diet, notes, dates, client_key),
                 )
@@ -542,7 +542,7 @@ def save_bible_study_availability():
                         dates = %s,
                         updated_at = NOW()
                     WHERE id = %s
-                    RETURNING id, name, dates, created_at, updated_at
+                    RETURNING id, name, adults, children, dates, created_at, updated_at
                     """,
                     (name, dates, existing["id"]),
                 )
@@ -551,7 +551,7 @@ def save_bible_study_availability():
                     """
                     INSERT INTO bible_study_availability (name, dates)
                     VALUES (%s, %s)
-                    RETURNING id, name, dates, created_at, updated_at
+                    RETURNING id, name, adults, children, dates, created_at, updated_at
                     """,
                     (name, dates),
                 )
