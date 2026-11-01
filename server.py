@@ -429,6 +429,25 @@ def create_registration():
     return jsonify({"registration": registration}), 201
 
 
+@app.post("/api/admin/registrations/reset")
+def reset_registrations():
+    if not admin_authorized():
+        return jsonify({"error": "unauthorized"}), 401
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM camp_registrations")
+            deleted = cur.rowcount
+        conn.commit()
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT COUNT(*) AS count FROM camp_registrations")
+            remaining = cur.fetchone()["count"]
+
+    return jsonify({"ok": True, "deleted": deleted, "remaining": remaining})
+
+
 @app.delete("/api/comments/<int:comment_id>")
 def delete_comment(comment_id: int):
     if not ADMIN_TOKEN:
