@@ -57,6 +57,29 @@
       .steps,.facts{grid-template-columns:1fr}.hero{min-height:520px}.hero-copy{padding:30px 22px}
       .section{padding:22px}.shell{margin-top:28px}
     }
+
+    .availability{margin-top:16px}
+    .availability-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+    .date-option{display:flex;align-items:flex-start;gap:12px;padding:16px;border:1px solid #e2e9e4;border-radius:14px;background:#fff;cursor:pointer}
+    .date-option input{margin-top:5px;accent-color:var(--orange)}
+    .date-option strong{display:block;color:var(--green);font-size:14px}
+    .date-option span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+    .form-row{display:grid;grid-template-columns:1fr auto;gap:12px;margin-top:18px}
+    .form-row input{width:100%;height:46px;border:1px solid #dbe4dd;border-radius:12px;padding:0 14px;font:inherit;background:#fff;color:var(--green)}
+    .submit-btn{height:46px;border:0;border-radius:999px;padding:0 22px;background:linear-gradient(135deg,var(--orange-2),var(--orange));color:#fff;font-weight:900;cursor:pointer}
+    .form-status{min-height:22px;margin-top:10px;font-size:13px;color:var(--muted)}
+    .results{margin-top:22px;display:grid;gap:10px}
+    .result-row{display:grid;grid-template-columns:180px 72px 1fr;gap:12px;align-items:start;padding:14px 16px;border-radius:14px;background:#f7faf6;border:1px solid #e7eee7}
+    .result-date{font-weight:900;color:var(--green)}
+    .result-count{font-size:12px;font-weight:900;color:#d56d3f;background:#fff0e5;border-radius:999px;padding:5px 9px;text-align:center}
+    .result-names{font-size:13px;color:#526868}
+    @media(max-width:700px){
+      .availability-grid{grid-template-columns:1fr}
+      .form-row{grid-template-columns:1fr}
+      .result-row{grid-template-columns:1fr}
+      .result-count{width:max-content}
+    }
+
   </style>
 </head>
 <body>
@@ -75,8 +98,8 @@
         <p class="lead">選一卷聖經，在約定期間各自完整閱讀；讀完之後再選一天相聚，從彼此的觀察、問題與領受中，一起更深入理解經文。</p>
         <div class="chips">
           <span class="chip">11–12月</span>
-          <span class="chip">日期待定</span>
-          <span class="chip">書卷待定</span>
+          <span class="chip">星期日 1:00–2:00 PM</span>
+          <span class="chip">以賽亞書</span>
         </div>
       </div>
     </section>
@@ -91,7 +114,7 @@
         <article class="step">
           <div class="step-num">1</div>
           <h3>選定書卷</h3>
-          <p>先一起決定要讀哪一卷，例如《以賽亞書》或《馬可福音》。</p>
+          <p>本次研讀書卷已確定為《以賽亞書》，大家在聚會前按自己的節奏完成閱讀。</p>
         </article>
         <article class="step">
           <div class="step-num">2</div>
@@ -113,12 +136,12 @@
       <div class="two-col">
         <section class="section">
           <h2>目前安排</h2>
-          <p>這個活動仍在規劃階段，日期與書卷會根據大家的情況再確認。</p>
+          <p>活動日期會從大家可參與的星期日中選出最多人方便的一天；研讀書卷已確定為《以賽亞書》。</p>
           <div class="facts">
             <div class="fact"><strong>活動期間</strong><span>11月至12月</span></div>
-            <div class="fact"><strong>聚會日期</strong><span>待定</span></div>
-            <div class="fact"><strong>研讀書卷</strong><span>待定</span></div>
-            <div class="fact"><strong>聚會地點</strong><span>待定</span></div>
+            <div class="fact"><strong>聚會日期</strong><span>11/15、11/22、11/29、12/6｜星期日 1:00–2:00 PM</span></div>
+            <div class="fact"><strong>研讀書卷</strong><span>以賽亞書</span></div>
+            <div class="fact"><strong>聚會地點</strong><span>吉隆坡福音堂附近咖啡館</span></div>
           </div>
         </section>
 
@@ -129,14 +152,134 @@
         </section>
       </div>
 
-      <section class="cta" id="interest">
-        <h2>活動正在籌備中</h2>
-        <p>日期與研讀書卷確認後，這一頁會更新正式的參與與報名安排。目前可以先從首頁查看其他活動。</p>
-        <a class="cta-btn" href="../index.html#events">返回活動列表 →</a>
+      <section class="section availability" id="interest">
+        <h2>選擇你可以參加的日期</h2>
+        <p>可以複選。最後會以最多人能參與的星期日作為優先日期；所有選擇會公開顯示在下方，方便大家一起掌握目前情況。</p>
+
+        <form id="availabilityForm">
+          <div class="availability-grid">
+            <label class="date-option">
+              <input type="checkbox" name="dates" value="2026-11-15">
+              <span><strong>11月15日｜星期日</strong><span>1:00–2:00 PM</span></span>
+            </label>
+            <label class="date-option">
+              <input type="checkbox" name="dates" value="2026-11-22">
+              <span><strong>11月22日｜星期日</strong><span>1:00–2:00 PM</span></span>
+            </label>
+            <label class="date-option">
+              <input type="checkbox" name="dates" value="2026-11-29">
+              <span><strong>11月29日｜星期日</strong><span>1:00–2:00 PM</span></span>
+            </label>
+            <label class="date-option">
+              <input type="checkbox" name="dates" value="2026-12-06">
+              <span><strong>12月6日｜星期日</strong><span>1:00–2:00 PM</span></span>
+            </label>
+          </div>
+
+          <div class="form-row">
+            <input id="participantName" name="name" maxlength="80" required placeholder="你的姓名">
+            <button class="submit-btn" type="submit">提交日期</button>
+          </div>
+          <div class="form-status" id="formStatus" aria-live="polite"></div>
+        </form>
+
+        <div class="results" id="availabilityResults" aria-live="polite">
+          <div class="result-row">
+            <div class="result-date">正在載入</div>
+            <div class="result-count">—</div>
+            <div class="result-names">讀取大家目前的選擇中…</div>
+          </div>
+        </div>
       </section>
 
       <p class="credit">活動圖片：Tim Wildsmith / Unsplash</p>
     </div>
   </main>
+
+  <script>
+    (() => {
+      const API = 'https://acts-waterfall-test-api-production.up.railway.app';
+      const dates = [
+        ['2026-11-15', '11月15日｜星期日'],
+        ['2026-11-22', '11月22日｜星期日'],
+        ['2026-11-29', '11月29日｜星期日'],
+        ['2026-12-06', '12月6日｜星期日']
+      ];
+      const form = document.getElementById('availabilityForm');
+      const status = document.getElementById('formStatus');
+      const results = document.getElementById('availabilityResults');
+
+      function render(selections) {
+        const grouped = Object.fromEntries(dates.map(([key]) => [key, []]));
+        for (const item of selections || []) {
+          for (const date of item.dates || []) {
+            if (grouped[date]) grouped[date].push(item.name);
+          }
+        }
+
+        results.innerHTML = dates.map(([key, label]) => {
+          const names = grouped[key];
+          const nameText = names.length ? names.map(name => escapeHtml(name)).join('、') : '目前還沒有人選這一天';
+          return `
+            <div class="result-row">
+              <div class="result-date">${label}<br><span style="font-weight:600;color:#7b8888;font-size:12px">1:00–2:00 PM</span></div>
+              <div class="result-count">${names.length} 人</div>
+              <div class="result-names">${nameText}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, ch => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+        }[ch]));
+      }
+
+      async function loadResults() {
+        try {
+          const response = await fetch(API + '/api/bible-study/availability', { cache: 'no-store' });
+          if (!response.ok) throw new Error('load failed');
+          const data = await response.json();
+          render(data.selections || []);
+        } catch {
+          results.innerHTML = '<div class="result-row"><div class="result-date">暫時無法讀取</div><div class="result-count">—</div><div class="result-names">請稍後重新整理頁面。</div></div>';
+        }
+      }
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const name = document.getElementById('participantName').value.trim();
+        const selected = [...form.querySelectorAll('input[name="dates"]:checked')].map(el => el.value);
+
+        if (!name) {
+          status.textContent = '請先填寫姓名。';
+          return;
+        }
+        if (!selected.length) {
+          status.textContent = '請至少選擇一個可以參加的星期日。';
+          return;
+        }
+
+        status.textContent = '正在提交…';
+        try {
+          const response = await fetch(API + '/api/bible-study/availability', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, dates: selected })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || '提交失敗');
+          status.textContent = '已記錄。你可以再次提交同一姓名來更新日期。';
+          await loadResults();
+        } catch (error) {
+          status.textContent = error.message || '提交失敗，請稍後再試。';
+        }
+      });
+
+      loadResults();
+    })();
+  </script>
+
 </body>
 </html>
